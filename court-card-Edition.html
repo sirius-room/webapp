@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>タロットとカバラ クイズ（コートカード編）</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        void: '#09090b',
+                        panel: '#18181b',
+                        accent: '#8b5cf6',
+                        correct: '#10b981',
+                        wrong: '#ef4444'
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans JP"', 'sans-serif'],
+                        serif: ['"Noto Serif JP"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- MathJax -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            background-color: #050505;
+            color: #e4e4e7;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(76, 29, 149, 0.1) 0%, transparent 25%), 
+                radial-gradient(circle at 85% 30%, rgba(219, 39, 119, 0.1) 0%, transparent 25%);
+        }
+        .glass-panel {
+            background: rgba(24, 24, 27, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+        .btn-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -10px rgba(139, 92, 246, 0.5);
+        }
+        .anim-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #09090b; }
+        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen flex flex-col font-sans selection:bg-purple-500 selection:text-white">
+
+    <!-- Header -->
+    <header class="w-full p-4 border-b border-white/10 bg-black/50 sticky top-0 z-50 backdrop-blur-md">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                Tarot & Kabbalah: Court Card Edition
+            </h1>
+            <button onclick="resetApp()" class="text-xs text-gray-400 hover:text-white transition">
+                TOPへ戻る
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center p-4">
+        <div id="app-container" class="w-full max-w-3xl relative">
+
+            <!-- 1. Start Screen -->
+            <div id="screen-start" class="glass-panel rounded-2xl p-8 md:p-12 text-center anim-fade-in">
+                <h2 class="text-3xl md:text-4xl font-serif font-bold mb-6">クイズ集（全62問）</h2>
+                <p class="text-gray-400 mb-10 leading-relaxed">
+                    タロット、カバラ、生命の樹の構造とコートカードの対応関係を網羅したクイズです。<br>
+                    <span class="text-sm opacity-70">※全問解説付き</span>
+                </p>
+
+                <div class="grid gap-4 md:grid-cols-1 max-w-md mx-auto">
+                    <!-- Part 1 -->
+                    <button onclick="startQuiz('part1')" class="btn-hover group relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 p-6 text-left hover:border-blue-500/50 transition-colors">
+                        <div class="flex items-center justify-between relative z-10">
+                            <div>
+                                <h3 class="text-xl font-bold text-blue-400 mb-1">📖 前半 1-31問</h3>
+                                <p class="text-xs text-gray-500">基本構造、元素、神聖四文字、セフィラ対応など</p>
+                            </div>
+                            <span class="text-2xl opacity-50 group-hover:opacity-100 group-hover:scale-110 transition">🌒</span>
+                        </div>
+                        <div class="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </button>
+
+                    <!-- Part 2 -->
+                    <button onclick="startQuiz('part2')" class="btn-hover group relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 p-6 text-left hover:border-purple-500/50 transition-colors">
+                        <div class="flex items-center justify-between relative z-10">
+                            <div>
+                                <h3 class="text-xl font-bold text-purple-400 mb-1">🔮 後半 32-62問</h3>
+                                <p class="text-xs text-gray-500">大アルカナ、具体的なカード解釈、統合的な理解など</p>
+                            </div>
+                            <span class="text-2xl opacity-50 group-hover:opacity-100 group-hover:scale-110 transition">🌕</span>
+                        </div>
+                        <div class="absolute inset-0 bg-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </button>
+
+                    <!-- All -->
+                    <button onclick="startQuiz('all')" class="btn-hover group relative overflow-hidden rounded-xl bg-gradient-to-r from-indigo-900 to-purple-900 border border-indigo-500/30 p-6 text-left hover:border-pink-500/50 transition-colors shadow-lg">
+                        <div class="flex items-center justify-between relative z-10">
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-1">👑 全問チャレンジ (62問)</h3>
+                                <p class="text-xs text-gray-300">すべての知識を総復習する完全モード</p>
+                            </div>
+                            <span class="text-2xl opacity-80 group-hover:scale-110 transition">⚔️</span>
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 2. Quiz Screen -->
+            <div id="screen-quiz" class="hidden w-full">
+                <!-- Progress Bar -->
+                <div class="mb-6">
+                    <div class="flex justify-between text-xs text-gray-400 mb-2 font-mono">
+                        <span id="quiz-progress-text">Q 1 / 10</span>
+                        <span>正解数: <span id="quiz-score" class="text-emerald-400 font-bold">0</span></span>
+                    </div>
+                    <div class="h-1.5 w-full bg-gray-800 rounded-full overflow-hidden">
+                        <div id="quiz-progress-bar" class="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-300 ease-out" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Card -->
+                <div class="glass-panel rounded-2xl p-6 md:p-10 shadow-2xl relative overflow-hidden anim-fade-in">
+                    <!-- Question -->
+                    <div class="mb-8">
+                        <span class="inline-block px-3 py-1 rounded-full bg-white/5 text-xs text-gray-400 border border-white/10 mb-4">Question</span>
+                        <h2 id="question-text" class="text-xl md:text-2xl font-serif font-medium leading-relaxed">
+                            Loading...
+                        </h2>
+                    </div>
+
+                    <!-- Hint Toggle -->
+                    <button onclick="toggleHint()" id="btn-hint" class="text-xs text-amber-500 hover:text-amber-400 mb-6 flex items-center transition-colors">
+                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        ヒントを表示
+                    </button>
+                    <div id="hint-box" class="hidden mb-6 p-4 bg-amber-900/20 border-l-2 border-amber-600 rounded-r text-sm text-amber-100/80 anim-fade-in"></div>
+
+                    <!-- Options -->
+                    <div id="options-container" class="grid gap-3">
+                        <!-- Options generated by JS -->
+                    </div>
+
+                    <!-- Feedback (Overlay) -->
+                    <div id="feedback-overlay" class="absolute inset-0 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center text-center p-6 hidden z-20 anim-fade-in">
+                        <div id="feedback-icon" class="text-5xl mb-4"></div>
+                        <h3 id="feedback-title" class="text-2xl font-bold mb-2"></h3>
+                        <div id="feedback-content" class="text-gray-300 text-sm max-w-lg leading-relaxed mb-8"></div>
+                        <button id="btn-next" onclick="nextQuestion()" class="bg-white text-black font-bold py-3 px-10 rounded-full hover:bg-gray-200 transition transform hover:scale-105 shadow-lg shadow-white/20">
+                            次へ
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Result Screen -->
+            <div id="screen-result" class="hidden glass-panel rounded-2xl p-8 md:p-12 text-center anim-fade-in">
+                <p class="text-sm text-gray-500 uppercase tracking-widest mb-2">Result</p>
+                <h2 class="text-3xl md:text-4xl font-serif font-bold text-white mb-8">復習完了</h2>
+
+                <div class="flex justify-center items-baseline mb-8">
+                    <span id="result-score" class="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">0</span>
+                    <span class="text-2xl text-gray-500 mx-2">/</span>
+                    <span id="result-total" class="text-2xl text-gray-500">0</span>
+                </div>
+
+                <div id="perfect-message" class="hidden mb-8 p-4 bg-emerald-900/20 border border-emerald-500/30 rounded-lg text-emerald-300">
+                    🎉 全問正解！素晴らしい理解度です。
+                </div>
+
+                <!-- Wrong Answers Review Section -->
+                <div id="review-section" class="hidden text-left mb-10">
+                    <h3 class="text-lg font-bold text-rose-400 mb-4 flex items-center">
+                        <span class="bg-rose-500/10 p-2 rounded mr-2">✍️</span>
+                        復習リスト（間違えた問題）
+                    </h3>
+                    <div id="review-list" class="space-y-4 max-h-96 overflow-y-auto pr-2 custom-scrollbar">
+                        <!-- Wrong items injected here -->
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <button onclick="resetApp()" class="px-8 py-3 rounded-xl border border-gray-600 hover:bg-gray-800 transition text-gray-300">
+                        コース選択に戻る
+                    </button>
+                    <button onclick="retryCurrentMode()" class="px-8 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold shadow-lg shadow-purple-900/20 transition">
+                        同じコースを再挑戦
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="text-center p-6 text-gray-600 text-xs">
+        &copy; 2026 Tarot & Kabbalah Learning Tool - Court Card Edition
+    </footer>
+
+    <!-- Application Logic -->
+    <script>
+        // --- Full Question Database (62 Questions) ---
+        const allQuestionsDB = [
+            // 1. YHVH Structure
+            {
+                q: "神聖四文字 $YHVH$ において、「父」を象徴する文字はどれですか？",
+                options: [
+                    { t: "$Y$ （ヨッド）", r: "正解。ヨッドは「父」であり、根源的な種や意志、能動的なエネルギーを象徴します。", c: true },
+                    { t: "$H$ （ヘー）", r: "不正解。最初のヘーは「母」を象徴します。", c: false },
+                    { t: "$V$ （ヴァヴ）", r: "不正解。ヴァヴは「息子」を象徴します。", c: false },
+                    { t: "$H$ （末尾のヘー）", r: "不正解。末尾のヘーは「娘」を象徴します。", c: false }
+                ],
+                h: "生命の樹では、至高の三角形の頂点に近い、最も能動的なエネルギーです。"
+            },
+            {
+                q: "神聖四文字 $YHVH$ において、「母」を象徴する文字はどれですか？",
+                options: [
+                    { t: "最初の $H$ （ヘー）", r: "正解。最初のヘーは「母」であり、ヨッドの種を受け止め、形を与えるための器となります。", c: true },
+                    { t: "$Y$ （ヨッド）", r: "不正解。ヨッドは「父」を象徴します。", c: false },
+                    { t: "$V$ （ヴァヴ）", r: "不正解。ヴァヴは「息子」を象徴します。", c: false },
+                    { t: "最後の $H$ （ヘー）", r: "不正解。最後のヘーは「娘」を象徴します。", c: false }
+                ],
+                h: "ヨッドの次に位置し、受容的な性質を持つ文字です。"
+            },
+            {
+                q: "神聖四文字 $YHVH$ において、「息子」を象徴する文字は何ですか？",
+                options: [
+                    { t: "$V$ （ヴァヴ）", r: "正解。ヴァヴは「釘」や「鉤」を意味し、ヨッド（父）とヘー（母）を結びつけ、次世代へと繋ぐ「息子」の象徴です。", c: true },
+                    { t: "$Y$ （ヨッド）", r: "不正解。ヨッドは始まりの「父」です。", c: false },
+                    { t: "最初の $H$ （ヘー）", r: "不正解。最初のヘーは受容する「母」です。", c: false },
+                    { t: "最後の $H$ （ヘー）", r: "不正解。最後のヘーは完成された「娘」です。", c: false }
+                ],
+                h: "形としては釘のような形をしており、アルファベットの6番目の文字です。"
+            },
+            {
+                q: "神聖四文字 $YHVH$ において、「娘」を象徴する文字はどれですか？",
+                options: [
+                    { t: "最後の $H$ （ヘー）", r: "正解。最後のヘーは「娘」であり、エネルギーが完全に物質化・現実化した最終形態を表します。", c: true },
+                    { t: "$Y$ （ヨッド）", r: "不正解。ヨッドは「父」を象徴します。", c: false },
+                    { t: "最初の $H$ （ヘー）", r: "不正解。最初のヘーは「母」を象徴します。", c: false },
+                    { t: "$V$ （ヴァヴ）", r: "不正解。ヴァヴは「息子」を象徴します。", c: false }
+                ],
+                h: "家族構成の最後であり、現実世界に対応する文字です。"
+            },
+            // 2. Sephirot Locations
+            {
+                q: "生命の樹において、ヨッド（$Y$）に対応するセフィラはどこですか？",
+                options: [
+                    { t: "コクマー（知恵）", r: "正解。コクマーは至高の三角形の右側に位置し、純粋なエネルギーの根源である「父」を表します。", c: true },
+                    { t: "ビナー（理解）", r: "不正解。ビナーはヘー（母）に対応します。", c: false },
+                    { t: "ティファレト（美）", r: "不正解。ティファレトはヴァヴ（息子）に対応します。", c: false },
+                    { t: "マルクト（王国）", r: "不正解。マルクトは最後のヘー（娘）に対応します。", c: false }
+                ],
+                h: "右側の柱の頂点にあり、知恵を意味します。"
+            },
+            {
+                q: "生命の樹において、最初のヘー（$H$）に対応するセフィラはどこですか？",
+                options: [
+                    { t: "ビナー（理解）", r: "正解。ビナーは「理解」を意味し、コクマー（知恵）からのエネルギーを受け止め、形を与える「母」の役割を持ちます。", c: true },
+                    { t: "コクマー（知恵）", r: "不正解。コクマーはヨッド（父）に対応します。", c: false },
+                    { t: "ティファレト（美）", r: "不正解。ティファレトはヴァヴ（息子）に対応します。", c: false },
+                    { t: "マルクト（王国）", r: "不正解。マルクトは最後のヘー（娘）に対応します。", c: false }
+                ],
+                h: "「母」や「形を与えるもの」という意味を持つ、左側の柱の頂点にあるセフィラです。"
+            },
+            {
+                q: "生命の樹において、ヴァヴ（$V$）に対応するセフィラはどこですか？",
+                options: [
+                    { t: "ティファレト（美）を中心とした領域", r: "正解。ティファレトは生命の樹の中心（ハート）であり、上層のエネルギーを下層へ繋ぐ「息子」の役割を果たします。", c: true },
+                    { t: "ケテル（王冠）", r: "不正解。ケテルはすべての源泉であり、まだ分化していない状態です。", c: false },
+                    { t: "ビナー（理解）", r: "不正解。ビナーは母なる原理です。", c: false },
+                    { t: "マルクト（王国）", r: "不正解。マルクトは最終的な現実化の場所です。", c: false }
+                ],
+                h: "生命の樹の心臓部に位置し、バランスと美を象徴します。"
+            },
+            {
+                q: "生命の樹において、最後のヘー（$H$）に対応するセフィラはどこですか？",
+                options: [
+                    { t: "マルクト（王国）", r: "正解。マルクトは生命の樹の最下部に位置し、すべてのエネルギーが最終的に形となる「現実世界」や「肉体」を表します。", c: true },
+                    { t: "イエソド（基礎）", r: "不正解。イエソドはマルクトの一つ上にあり、無意識や夢、形になる直前の鋳型を表します。", c: false },
+                    { t: "ホド（栄光）", r: "不正解。ホドは思考や論理を表すセフィラです。", c: false },
+                    { t: "ケテル（王冠）", r: "不正解。ケテルは生命の樹の最上部にあり、すべての始まりを表します。", c: false }
+                ],
+                h: "私たちが住んでいる物理的な世界や、大地を象徴する場所です。"
+            },
+            // 3. Elements & YHVH
+            {
+                q: "四大元素のうち、ヨッド（コクマー）が象徴する元素は何ですか？",
+                options: [
+                    { t: "火", r: "正解。火は最も純粋で能動的なエネルギーであり、創造の最初の閃きであるヨッドに対応します。", c: true },
+                    { t: "水", r: "不正解。水は受容的な性質を持ち、ヘー（母）に対応します。", c: false },
+                    { t: "空気（風）", r: "不正解。空気は伝達の性質を持ち、ヴァヴ（息子）に対応します。", c: false },
+                    { t: "土", r: "不正解。土は固定的で現実的な性質を持ち、最後のヘー（娘）に対応します。", c: false }
+                ],
+                h: "熱く、上に燃え上がる性質を持つ元素です。"
+            },
+            {
+                q: "四大元素のうち、最初のヘー（ビナー）が象徴する元素は何ですか？",
+                options: [
+                    { t: "水", r: "正解。水は形に合わせて姿を変え、エネルギーを受け止める受容的な性質を持ち、母なるビナーに対応します。", c: true },
+                    { t: "火", r: "不正解。火は父なる原理です。", c: false },
+                    { t: "空気（風）", r: "不正解。空気は息子なる原理です。", c: false },
+                    { t: "土", r: "不正解。土は娘なる原理です。", c: false }
+                ],
+                h: "感情や無意識、受容性を象徴する元素です。"
+            },
+            {
+                q: "四大元素のうち、ヴァヴ（ティファレト）が象徴する元素は何ですか？",
+                options: [
+                    { t: "空気（風）", r: "正解。ヴァヴは「息子」に対応し、火（父）と水（母）を繋ぐ「空気（風）」の元素によって象徴されます。", c: true },
+                    { t: "火", r: "不正解。火はヨッド（父）に対応します。", c: false },
+                    { t: "水", r: "不正解。水は最初のヘー（母）に対応します。", c: false },
+                    { t: "土", r: "不正解。土は最後のヘー（娘）に対応します。", c: false }
+                ],
+                h: "知性や伝達、つなぐ性質を持つ元素です。"
+            },
+            {
+                q: "四大元素のうち、最後のヘー（マルクト）が象徴する元素は何ですか？",
+                options: [
+                    { t: "土", r: "正解。土は他の三元素（火・水・風）の結果として生じる、固定的で物質的な現実世界を象徴します。", c: true },
+                    { t: "火", r: "不正解。火は始まりのエネルギーです。", c: false },
+                    { t: "水", r: "不正解。水は受容のエネルギーです。", c: false },
+                    { t: "空気（風）", r: "不正解。空気は調整のエネルギーです。", c: false }
+                ],
+                h: "最も重く、安定しており、物質を構成する元素です。"
+            },
+            // 4. Court Cards -> Sephirot
+            {
+                q: "コートカードのランク「キング」が対応する生命の樹の場所はどこですか？",
+                options: [
+                    { t: "コクマー（知恵）", r: "正解。キングは「父」のエネルギー（ヨッド）に対応し、権威、意志、開始の力を持つコクマーに属します。", c: true },
+                    { t: "ビナー（理解）", r: "不正解。ビナーに対応するのはクイーンです。", c: false },
+                    { t: "ティファレト（美）", r: "不正解。ティファレトに対応するのはナイトです。", c: false },
+                    { t: "マルクト（王国）", r: "不正解。マルクトに対応するのはペイジです。", c: false }
+                ],
+                h: "右側の柱の頂点にある、父なるセフィラです。"
+            },
+            {
+                q: "コートカードのランク「クイーン」が対応する生命の樹の場所はどこですか？",
+                options: [
+                    { t: "ビナー（理解）", r: "正解。クイーンは「母」のエネルギー（最初のヘー）に対応し、受容、育成、形を与えるビナーに属します。", c: true },
+                    { t: "コクマー（知恵）", r: "不正解。コクマーに対応するのはキングです。", c: false },
+                    { t: "ティファレト（美）", r: "不正解。ティファレトに対応するのはナイトです。", c: false },
+                    { t: "マルクト（王国）", r: "不正解。マルクトに対応するのはペイジです。", c: false }
+                ],
+                h: "左側の柱の頂点にある、母なるセフィラです。"
+            },
+            {
+                q: "コートカードのランク「ナイト」が対応する生命の樹の場所はどこですか？",
+                options: [
+                    { t: "ティファレト（美）を中心とする領域", r: "正解。ナイトは「息子」のエネルギー（ヴァヴ）に対応し、活動的で目標に向かって進むティファレトの性質を持ちます。", c: true },
+                    { t: "マルクト（王国）", r: "不正解。マルクトに対応するのはペイジです。", c: false },
+                    { t: "ビナー（理解）", r: "不正解。ビナーに対応するのはクイーンです。", c: false },
+                    { t: "コクマー（知恵）", r: "不正解。コクマーに対応するのはキングです。", c: false }
+                ],
+                h: "若々しく、動きがあり、生命の樹の中心的なエネルギーです。"
+            },
+            {
+                q: "コートカードのランク「ペイジ」が対応する生命の樹の場所はどこですか？",
+                options: [
+                    { t: "マルクト（王国）", r: "正解。ペイジは「娘」のエネルギー（最後のヘー）に対応し、最も物質的で、学習や初期段階の経験を表すマルクトに属します。", c: true },
+                    { t: "ティファレト（美）", r: "不正解。ティファレトに対応するのはナイト（息子）です。", c: false },
+                    { t: "ビナー（理解）", r: "不正解。ビナーに対応するのはクイーン（母）です。", c: false },
+                    { t: "コクマー（知恵）", r: "不正解。コクマーに対応するのはキング（父）です。", c: false }
+                ],
+                h: "一番下のセフィラで、見習いや初心者の段階を表します。"
+            },
+            // 5. Court Cards -> Elements
+            {
+                q: "コートカードの「キング」が主に象徴する元素は何ですか？",
+                options: [
+                    { t: "火", r: "正解。キングは「火」の性質（ヨッド）を持ち、能動的で外向的なリーダーシップを表します。", c: true },
+                    { t: "水", r: "不正解。水はクイーンの性質です。", c: false },
+                    { t: "風（空気）", r: "不正解。風はナイトの性質です。", c: false },
+                    { t: "土", r: "不正解。土はペイジの性質です。", c: false }
+                ],
+                h: "最もエネルギーが高く、燃え上がるような性質です。"
+            },
+            {
+                q: "コートカードの「クイーン」が主に象徴する元素は何ですか？",
+                options: [
+                    { t: "水", r: "正解。クイーンは「水」の性質（ヘー）を持ち、受容的で内面的な感情や育成を表します。", c: true },
+                    { t: "火", r: "不正解。火はキングの性質です。", c: false },
+                    { t: "風（空気）", r: "不正解。風はナイトの性質です。", c: false },
+                    { t: "土", r: "不正解。土はペイジの性質です。", c: false }
+                ],
+                h: "感情や無意識、形を与える力を象徴します。"
+            },
+            {
+                q: "コートカードの「ナイト」が主に象徴する元素は何ですか？",
+                options: [
+                    { t: "風（空気）", r: "正解。ナイトは「風」の性質（ヴァヴ）を持ち、移動、スピード、知性、伝達を表します。", c: true },
+                    { t: "火", r: "不正解。火はキングの性質です。", c: false },
+                    { t: "水", r: "不正解。水はクイーンの性質です。", c: false },
+                    { t: "土", r: "不正解。土はペイジの性質です。", c: false }
+                ],
+                h: "常に動き回り、情報を運ぶ性質です。"
+            },
+            {
+                q: "コートカードの「ペイジ」が主に象徴する元素は何ですか？",
+                options: [
+                    { t: "土", r: "正解。ペイジは「土」の性質（最後のヘー）を持ち、具体的な学習、始まり、物質的な定着を表します。", c: true },
+                    { t: "火", r: "不正解。火はキングの性質です。", c: false },
+                    { t: "水", r: "不正解。水はクイーンの性質です。", c: false },
+                    { t: "風（空気）", r: "不正解。風はナイトの性質です。", c: false }
+                ],
+                h: "最も現実的で、地に足がついた学習の段階です。"
+            },
+            // 6. Court Cards -> YHVH
+            {
+                q: "コートカードの「キング」に対応する神聖四文字はどれですか？",
+                options: [
+                    { t: "$Y$ （ヨッド）", r: "正解。キングは父なるヨッドに対応します。", c: true },
+                    { t: "$H$ （最初のヘー）", r: "不正解。最初のヘーはクイーンに対応します。", c: false },
+                    { t: "$V$ （ヴァヴ）", r: "不正解。ヴァヴはナイトに対応します。", c: false },
+                    { t: "$H$ （最後のヘー）", r: "不正解。最後のヘーはペイジに対応します。", c: false }
+                ],
+                h: "始まりの点、火花を象徴する文字です。"
+            },
+            {
+                q: "コートカードの「クイーン」に対応する神聖四文字はどれですか？",
+                options: [
+                    { t: "$H$ （最初のヘー）", r: "正解。クイーンは母なるヘーに対応します。", c: true },
+                    { t: "$Y$ （ヨッド）", r: "不正解。ヨッドはキングに対応します。", c: false },
+                    { t: "$V$ （ヴァヴ）", r: "不正解。ヴァヴはナイトに対応します。", c: false },
+                    { t: "$H$ （最後のヘー）", r: "不正解。最後のヘーはペイジに対応します。", c: false }
+                ],
+                h: "窓や受容する器を象徴する文字です。"
+            },
+            {
+                q: "コートカードの「ナイト」に対応する神聖四文字はどれですか？",
+                options: [
+                    { t: "$V$ （ヴァヴ）", r: "正解。ナイトは息子なるヴァヴに対応します。", c: true },
+                    { t: "$Y$ （ヨッド）", r: "不正解。ヨッドはキングに対応します。", c: false },
+                    { t: "$H$ （最初のヘー）", r: "不正解。最初のヘーはクイーンに対応します。", c: false },
+                    { t: "$H$ （最後のヘー）", r: "不正解。最後のヘーはペイジに対応します。", c: false }
+                ],
+                h: "釘や連結を象徴する文字です。"
+            },
+            {
+                q: "コートカードの「ペイジ」に対応する神聖四文字はどれですか？",
+                options: [
+                    { t: "$H$ （最後のヘー）", r: "正解。ペイジは娘なる最後のヘーに対応します。", c: true },
+                    { t: "$Y$ （ヨッド）", r: "不正解。ヨッドはキングに対応します。", c: false },
+                    { t: "$H$ （最初のヘー）", r: "不正解。最初のヘーはクイーンに対応します。", c: false },
+                    { t: "$V$ （ヴァヴ）", r: "不正解。ヴァヴはナイトに対応します。", c: false }
+                ],
+                h: "現実世界への定着を象徴する文字です。"
+            },
+            // 7. Specific Meanings (From CSV Snippets)
+            {
+                q: "コートカードの「ナイト」がエネルギーを暴走させずに行動するために、重要とされる視点は何ですか？",
+                options: [
+                    { t: "自分を上から眺めるような「俯瞰した目線」", r: "正解。ナイトは疾走するエネルギーを持っていますが、ただ突っ走るだけでなく、自分自身や状況を客観的に見る「俯瞰の目」を持つことで、目的を見失わずに済みます。", c: true },
+                    { t: "周囲の感情に深く共感する「慈悲の目線」", r: "不正解。共感も大切ですが、ナイトの課題である「行動の制御」においては客観的な視点の方が重要です。", c: false },
+                    { t: "過去の失敗を分析し続ける「反省の目線」", r: "不正解。過去に囚われすぎると、ナイトの持ち味である前進する力が削がれてしまいます。", c: false },
+                    { t: "権力者やルールに従う「従順な目線」", r: "不正解。ナイトは自律的に動く実働部隊であり、盲目的な従順さよりも状況判断能力が求められます。", c: false }
+                ],
+                h: "ゲームのプレイヤーがキャラクターを操作するように、少し高い視点を持つことです。"
+            },
+            {
+                q: "40代など、ある程度の経験を積んだ後に新しい分野に飛び込んだ人のエネルギーは、コートカードのどのランクに例えられますか？",
+                options: [
+                    { t: "ペイジ（Page）", r: "正解。実年齢に関わらず、新しい世界に飛び込み、一から学び吸収しようとする姿勢は、学習者であり「種」の状態である「ペイジ」のエネルギーです。", c: true },
+                    { t: "ナイト（Knight）", r: "不正解。ナイトはある程度動き出し、勢いに乗っている状態です。", c: false },
+                    { t: "クイーン（Queen）", r: "不正解。クイーンはその分野で受容し、育てる立場にある状態です。", c: false },
+                    { t: "キング（King）", r: "不正解。キングはその分野を熟知し、統率する立場にある状態です。", c: false }
+                ],
+                h: "「初心忘るべからず」の精神を持つ、最も若々しいエネルギーです。"
+            },
+            {
+                q: "コクマー（キング）の純粋なエネルギーが、物質世界に近いレベル（ヴェールの下）に降りた時、どのような弊害が生じやすいですか？",
+                options: [
+                    { t: "創造の衝動が、支配欲やコントロール欲といったエゴに変わりやすくなる", r: "正解。高次の「意志」が低次のレベルで歪むと、純粋なリーダーシップではなく、他者を自分の思い通りに動かしたいというエゴとして現れることがあります。", c: true },
+                    { t: "エネルギーが枯渇し、何も行動できなくなる", r: "不正解。キングのエネルギーは本来過剰なほど能動的であり、枯渇よりは暴走や歪みが問題になりやすいです。", c: false },
+                    { t: "感情的になりすぎて、論理的な判断ができなくなる", r: "不正解。感情の暴走は「水」の要素（クイーンやカップ）のバランス崩壊で語られることが多いです。", c: false },
+                    { t: "細かいことにこだわりすぎて、全体が見えなくなる", r: "不正解。これは詳細にこだわる「ペイジ」や「ペンタクルス」のネガティブな側面に近いかもしれません。", c: false }
+                ],
+                h: "「私がルールだ」という意識が強くなりすぎた状態です。"
+            },
+            {
+                q: "ビナー（クイーン）の段階で生じる「制限」にはどのような意義がありますか？",
+                options: [
+                    { t: "無限の可能性の中から一つを選び取り、形を生み出すために必要である", r: "正解。制限（ビナー）がなければ、エネルギー（コクマー）は拡散するだけで形になりません。制限こそが創造の母体となります。", c: true },
+                    { t: "エネルギーの流れを完全に止め、静止させるために必要である", r: "不正解。静止が目的ではなく、流れを「形にする」ための枠組み作りが目的です。", c: false },
+                    { t: "創造性を破壊し、現実的な妥協をするために必要である", r: "不正解。妥協ではなく、現実化するための必須プロセスです。", c: false },
+                    { t: "他者の介入を防ぎ、自分だけの世界を守るために必要である", r: "不正解。自己防衛の意味合いよりも、宇宙的な創造原理としての「型」の役割が強いです。", c: false }
+                ],
+                h: "水がコップに入れないと飲めないように、エネルギーも枠がないと使えません。"
+            },
+            // 8. Suits
+            {
+                q: "小アルカナの「ワンド（棒）」が象徴する人間の機能はどれですか？",
+                options: [
+                    { t: "意志・情熱・直観", r: "正解。ワンドは「火」の元素に対応し、行動を起こすための根源的な意志や情熱、直観的な閃きを表します。", c: true },
+                    { t: "感情・愛・受容", r: "不正解。感情や愛は「カップ（水）」の領域です。", c: false },
+                    { t: "思考・論理・分析", r: "不正解。思考や論理は「ソード（風）」の領域です。", c: false },
+                    { t: "感覚・身体・物質", r: "不正解。身体や物質は「ペンタクルス（土）」の領域です。", c: false }
+                ],
+                h: "燃え上がる炎のように、何かを始めようとするエネルギーです。"
+            },
+            {
+                q: "小アルカナの「カップ（聖杯）」が対応する四大元素は何ですか？",
+                options: [
+                    { t: "水", r: "正解。カップは「水」の元素に対応し、感情の流れ、無意識、関係性、愛を象徴します。", c: true },
+                    { t: "火", r: "不正解。火はワンドに対応します。", c: false },
+                    { t: "風（空気）", r: "不正解。風はソードに対応します。", c: false },
+                    { t: "土", r: "不正解。土はペンタクルスに対応します。", c: false }
+                ],
+                h: "器に入った液体のように、形を変え、心を満たすものです。"
+            },
+            {
+                q: "小アルカナの「ソード（剣）」が象徴する人間の機能はどれですか？",
+                options: [
+                    { t: "思考・知性・言語", r: "正解。ソードは「風」の元素に対応し、物事を切り分ける分析力、論理的思考、コミュニケーション、そして葛藤を表します。", c: true },
+                    { t: "意志・情熱", r: "不正解。意志はワンドの領域です。", c: false },
+                    { t: "感情・共感", r: "不正解。感情はカップの領域です。", c: false },
+                    { t: "物質的安定・五感", r: "不正解。物質はペンタクルスの領域です。", c: false }
+                ],
+                h: "風のように素早く動き、真実と嘘を切り分ける鋭さを持ちます。"
+            },
+            {
+                q: "小アルカナの「ペンタクルス（金貨）」が対応する四大元素は何ですか？",
+                options: [
+                    { t: "土", r: "正解。ペンタクルスは「土」の元素に対応し、物質、肉体、五感、現実的な成果、安定を象徴します。", c: true },
+                    { t: "火", r: "不正解。火はワンドに対応します。", c: false },
+                    { t: "水", r: "不正解。水はカップに対応します。", c: false },
+                    { t: "風（空気）", r: "不正解。風はソードに対応します。", c: false }
+                ],
+                h: "手に触れられるもの、資産や成果を象徴します。"
+            },
+            // 9. Numbers
+            {
+                q: "数札（小アルカナ）の「エース（1）」は、生命の樹のどのセフィラに対応しますか？",
+                options: [
+                    { t: "ケテル（王冠）", r: "正解。エースは各スートの根源的な力であり、生命の樹の頂点であるケテル（1）に対応します。", c: true },
+                    { t: "コクマー（知恵）", r: "不正解。コクマー（2）に対応するのは「2」のカードです。", c: false },
+                    { t: "ティファレト（美）", r: "不正解。ティファレト（6）に対応するのは「6」のカードです。", c: false },
+                    { t: "マルクト（王国）", r: "不正解。マルクト（10）に対応するのは「10」のカードです。", c: false }
+                ],
+                h: "数字の「1」であり、すべての始まりの場所です。"
+            },
+            {
+                q: "数札（小アルカナ）の「10」は、生命の樹のどのセフィラに対応しますか？",
+                options: [
+                    { t: "マルクト（王国）", r: "正解。「10」はサイクルの完了と完全な現実化を表し、生命の樹の最下部であるマルクトに対応します。", c: true },
+                    { t: "イエソド（基礎）", r: "不正解。イエソド（9）に対応するのは「9」のカードです。", c: false },
+                    { t: "ホド（栄光）", r: "不正解。ホド（8）に対応するのは「8」のカードです。", c: false },
+                    { t: "ネツァク（勝利）", r: "不正解。ネツァク（7）に対応するのは「7」のカードです。", c: false }
+                ],
+                h: "スートの力が完全に具体化した、終わりの数字です。"
+            },
+            // 10. Major Arcana Specifics
+            {
+                q: "「愚者」のカードが「0」という数字を持つことの象徴的な意味は何ですか？",
+                options: [
+                    { t: "無限の可能性と、まだ何者でもない純粋な状態", r: "正解。「0」は無であり、同時にすべてを含みうる可能性の卵です。愚者は何にも縛られず、どこへでも行ける自由な魂を表します。", c: true },
+                    { t: "何も持っていない貧困と無力さ", r: "不正解。物質的には持っていなくても、精神的には無限の可能性を持っており、単なる欠乏ではありません。", c: false },
+                    { t: "サイクルの終わりと消滅", r: "不正解。終わりを表すのは「21：世界」や「死神」であり、愚者は始まりの前の段階です。", c: false },
+                    { t: "社会的なルールからの完全な逸脱と犯罪性", r: "不正解。ルールに縛られない自由さはありますが、必ずしも犯罪的という意味ではありません。", c: false }
+                ],
+                h: "卵のような形をした数字で、始まりの前段階を表します。"
+            },
+            {
+                q: "大アルカナの「魔術師」が対応する惑星は何ですか？",
+                options: [
+                    { t: "水星", r: "正解。「魔術師」は水星に対応し、コミュニケーション、知性、技術、そして異なる世界（意識と無意識）を繋ぐ伝達者の役割を果たします。", c: true },
+                    { t: "金星", r: "不正解。金星に対応するのは「女帝」です。", c: false },
+                    { t: "月", r: "不正解。月に対応するのは「女教皇」です。", c: false },
+                    { t: "太陽", r: "不正解。太陽に対応するのは「太陽」のカードです。", c: false }
+                ],
+                h: "神々のメッセンジャーであり、知恵と言葉を司る惑星です。"
+            },
+            {
+                q: "大アルカナの「女教皇」が対応する天体は何ですか？",
+                options: [
+                    { t: "月", r: "正解。「女教皇」は月に対応し、直観、潜在意識、神秘、そして隠された真実を象徴します。", c: true },
+                    { t: "木星", r: "不正解。木星に対応するのは「運命の輪」です。", c: false },
+                    { t: "土星", r: "不正解。土星に対応するのは「世界」です。", c: false },
+                    { t: "火星", r: "不正解。火星に対応するのは「塔」です。", c: false }
+                ],
+                h: "夜空に輝き、満ち欠けによって変化と無意識を支配する天体です。"
+            },
+            {
+                q: "大アルカナの「女帝」が対応する惑星は何ですか？",
+                options: [
+                    { t: "金星", r: "正解。「女帝」は金星に対応し、愛、美、豊穣、創造性、そして自然の繁栄を象徴します。", c: true },
+                    { t: "月", r: "不正解。月に対応するのは「女教皇」です。", c: false },
+                    { t: "地球", r: "不正解。地球（物質世界）そのものはマルクトや「世界」に関連しますが、女帝の天体対応は金星です。", c: false },
+                    { t: "太陽", r: "不正解。太陽に対応するのは「太陽」です。", c: false }
+                ],
+                h: "愛と美の女神ヴィーナスに関連する惑星です。"
+            },
+            {
+                q: "大アルカナの「皇帝」が対応する黄道十二宮の星座は何ですか？",
+                options: [
+                    { t: "牡羊座", r: "正解。「皇帝」は牡羊座に対応し、リーダーシップ、開拓精神、父性的な権威を象徴します。", c: true },
+                    { t: "牡牛座", r: "不正解。牡牛座に対応するのは「法王」です。", c: false },
+                    { t: "獅子座", r: "不正解。獅子座に対応するのは「力」です。", c: false },
+                    { t: "山羊座", r: "不正解。山羊座に対応するのは「悪魔」です。", c: false }
+                ],
+                h: "12星座の最初のサインで、活動的で男性的なエネルギーを持ちます。"
+            },
+            {
+                q: "大アルカナの「法王」が対応する黄道十二宮の星座は何ですか？",
+                options: [
+                    { t: "牡牛座", r: "正解。「法王」は牡牛座に対応し、伝統、教育、精神的な指導、そして価値観の継承を象徴します。", c: true },
+                    { t: "双子座", r: "不正解。双子座に対応するのは「恋人たち」です。", c: false },
+                    { t: "蟹座", r: "不正解。蟹座に対応するのは「戦車」です。", c: false },
+                    { t: "獅子座", r: "不正解。獅子座に対応するのは「力」です。", c: false }
+                ],
+                h: "地のエレメントを持ち、堅実で伝統的な教えを守る星座です。"
+            },
+            {
+                q: "大アルカナの「恋人たち」が対応する黄道十二宮の星座は何ですか？",
+                options: [
+                    { t: "双子座", r: "正解。「恋人たち」は双子座に対応し、選択、コミュニケーション、二元性の統合、そして関係性を象徴します。", c: true },
+                    { t: "天秤座", r: "不正解。天秤座に対応するのは「正義」です。", c: false },
+                    { t: "乙女座", r: "不正解。乙女座に対応するのは「隠者」です。", c: false },
+                    { t: "射手座", r: "不正解。射手座に対応するのは「節制」です。", c: false }
+                ],
+                h: "風のエレメントを持ち、二人の人物や天使が描かれることが多いカードです。"
+            },
+            {
+                q: "「運命の輪」を回した後に現れる、蟹座に対応し、強力に前進するカードは何ですか？",
+                options: [
+                    { t: "「戦車」のカード", r: "正解。「戦車」は蟹座に対応し、硬い殻（戦車）で守りながら、感情や意志をコントロールして目標に向かって突き進むカードです。", c: true },
+                    { t: "「力」のカード", r: "不正解。「力」は獅子座に対応します。", c: false },
+                    { t: "「月」のカード", r: "不正解。「月」は魚座に対応することが多く、無意識や不安、幻想を表します。", c: false },
+                    { t: "「皇帝」のカード", r: "不正解。「皇帝」は牡羊座に対応し、支配や秩序、父性を表します。", c: false }
+                ],
+                h: "二匹のスフィンクスを御し、自らの居場所を守りながら進む若き王の姿です。"
+            },
+            {
+                q: "大アルカナの「力」が対応する黄道十二宮の星座は何ですか？",
+                options: [
+                    { t: "獅子座", r: "正解。「力」は獅子座に対応し、内なる情熱や本能（ライオン）を、意志の力と優しさでコントロールすることを象徴します。", c: true },
+                    { t: "牡羊座", r: "不正解。牡羊座に対応するのは「皇帝」です。", c: false },
+                    { t: "射手座", r: "不正解。射手座に対応するのは「節制」です。", c: false },
+                    { t: "山羊座", r: "不正解。山羊座に対応するのは「悪魔」です。", c: false }
+                ],
+                h: "女性が猛獣を手懐けている絵柄で、火のエレメントを持つ星座です。"
+            },
+            {
+                q: "大アルカナの「隠者」が対応する黄道十二宮の星座は何ですか？",
+                options: [
+                    { t: "乙女座", r: "正解。「隠者」は乙女座に対応し、内省、分析、細部への注意、奉仕、そして自己の真実を探求する孤独な旅を表します。", c: true },
+                    { t: "射手座", r: "不正解。射手座に対応するのは「節制」です。", c: false },
+                    { t: "水瓶座", r: "不正解。水瓶座に対応するのは「星」です。", c: false },
+                    { t: "魚座", r: "不正解。魚座に対応するのは「月」です。", c: false }
+                ],
+                h: "収穫の時期の星座であり、整理整頓や完璧主義に関連します。"
+            },
+            {
+                q: "大アルカナの「運命の輪」が対応する天体は何ですか？",
+                options: [
+                    { t: "木星", r: "正解。「運命の輪」は木星に対応し、拡大、発展、チャンス、そして運命のサイクルを象徴します。", c: true },
+                    { t: "土星", r: "不正解。土星に対応するのは「世界」です。", c: false },
+                    { t: "火星", r: "不正解。火星に対応するのは「塔」です。", c: false },
+                    { t: "太陽", r: "不正解。太陽に対応するのは「太陽」です。", c: false }
+                ],
+                h: "幸運と拡大を司る、太陽系最大の惑星です。"
+            },
+            {
+                q: "大アルカナの「正義」が対応する黄道十二宮の星座は何ですか？",
+                options: [
+                    { t: "天秤座", r: "正解。「正義」は天秤座に対応し、バランス、公平さ、カルマの法則、そして客観的な判断を象徴します。", c: true },
+                    { t: "乙女座", r: "不正解。乙女座に対応するのは「隠者」です。", c: false },
+                    { t: "蠍座", r: "不正解。蠍座に対応するのは「死神」です。", c: false },
+                    { t: "獅子座", r: "不正解。獅子座に対応するのは「力」です。", c: false }
+                ],
+                h: "天秤を持つ女神が描かれており、均衡を意味します。"
+            },
+            {
+                q: "「吊るされた男」のカードが現実創造において重要とされる理由は何ですか？",
+                options: [
+                    { t: "視点を変え、どの「種（意図）」を植えるかを選択する直前の段階だから", r: "正解。「吊るされた男」は、一時停止して視点を逆転させることで、無意識のパターンに気づき、新たな選択をするための重要な転換点です。", c: true },
+                    { t: "積極的に行動を起こし、物理的な結果を力強く出す段階だから", r: "不正解。これは「戦車」や「皇帝」などの能動的なカードの性質に近いです。", c: false },
+                    { t: "過去のカルマをすべて清算し、完全に自由になった状態だから", r: "不正解。カルマの清算や完了は「世界」や「審判」に近いテーマです。", c: false },
+                    { t: "外部からの圧力により、どうすることもできない無力な状態だから", r: "不正解。一見無力に見えますが、内面的には自ら選んでその状態にあり、精神的な自由を得ようとしている状態です。", c: false }
+                ],
+                h: "行動する前の一時停止と、物事の「見方」を変えることに鍵があります。"
+            },
+            {
+                q: "「死神」のカードが象徴する「死」とは、物理的な死以外に何を指しますか？",
+                options: [
+                    { t: "既存の概念や、当たり前としていた常識の終わり", r: "正解。「死神」は変容のカードであり、古い考え方、関係性、あるいは自己イメージが終わりを告げ、新しいものが始まるスペースを作ることを意味します。", c: true },
+                    { t: "物理的な病気や怪我による活動の停止", r: "不正解。タロットにおいて「死神」が物理的な死や病気を直接指すことは稀です。", c: false },
+                    { t: "他者からの裏切りや攻撃による敗北", r: "不正解。これは「ソードの10」や「ソードの5」に近い状況です。", c: false },
+                    { t: "永遠に続く苦しみや終わりのない試練", r: "不正解。「死神」は「終わり」を告げるカードであり、苦しみが永遠に続くことを意味するわけではありません。", c: false }
+                ],
+                h: "「再生」のために必要な、古いサイクルの完了です。"
+            },
+            {
+                q: "大アルカナの「節制」が対応する黄道十二宮の星座は何ですか？",
+                options: [
+                    { t: "射手座", r: "正解。「節制」は射手座に対応します。一見静かなカードですが、異なる要素を混ぜ合わせてより高い次元へ向かう「錬金術」的なプロセス（火の変容）を表します。", c: true },
+                    { t: "山羊座", r: "不正解。山羊座に対応するのは「悪魔」です。", c: false },
+                    { t: "乙女座", r: "不正解。乙女座に対応するのは「隠者」です。", c: false },
+                    { t: "蠍座", r: "不正解。蠍座に対応するのは「死神」です。", c: false }
+                ],
+                h: "半人半馬のケンタウロスに関連する星座で、理想や哲学を追求します。"
+            },
+            {
+                q: "「悪魔」のカードにおいて、過剰な刺激やアドレナリンは何のために分泌されると解釈されますか？",
+                options: [
+                    { t: "自分の欠乏感や悲しみを直視せず、誤魔化すため", r: "正解。「悪魔」の鎖は、自分の内側にある痛みや欠乏感（ソードの3的な悲しみ）から目を逸らすための、快楽や依存による現実逃避を表すことがあります。", c: true },
+                    { t: "未知の領域に挑戦するための勇気を奮い立たせるため", r: "不正解。これは「愚者」や「戦車」のような前向きなエネルギーの使い方です。", c: false },
+                    { t: "肉体的な限界を超えて、目標を達成するため", r: "不正解。目標達成への執着はありますが、ここでのアドレナリンは麻痺させるための手段として解釈されます。", c: false },
+                    { t: "精神的な悟りを開くための覚醒作用として", r: "不正解。悟りとは逆の、物質的な執着や幻想に縛られている状態を指すことが多いです。", c: false }
+                ],
+                h: "痛み止めや、嫌なことを忘れるための熱狂に似ています。"
+            },
+            {
+                q: "大アルカナの「塔」が対応する惑星は何ですか？",
+                options: [
+                    { t: "火星", r: "正解。「塔」は火星に対応し、破壊、衝撃、急激な変化、そして既存の構造を打ち砕く激しいエネルギーを象徴します。", c: true },
+                    { t: "土星", r: "不正解。土星は制限や境界を表し、「世界」に対応します。", c: false },
+                    { t: "天王星", r: "不正解。現代占星術では「愚者」に割り当てられることがありますが、伝統的には「塔」は火星です。", c: false },
+                    { t: "冥王星", r: "不正解。冥王星は「審判」に対応付けられることがあります。", c: false }
+                ],
+                h: "戦いとエネルギーの惑星であり、赤い色で象徴されます。"
+            },
+            {
+                q: "「塔」のカードが崩壊させるものは、成長において何に繋がると解釈されますか？",
+                options: [
+                    { t: "固執していた「いい人の仮面」や既存の枠組みを壊し、素の自分に戻ること", r: "正解。「塔」の崩壊は、偽りの自我や制限された構造を取り払い、より本質的な自分（素の自分）を解放するために起こります。", c: true },
+                    { t: "他者との関係性をすべて断ち切り、孤独の中で強さを手に入れること", r: "不正解。目的は孤独になることではなく、真実に基づかない構造の打破です。", c: false },
+                    { t: "積み上げてきた努力がすべて無駄になり、最初からやり直すこと", r: "不正解。崩壊は強固な土台の上に再構築するための浄化作用であり、すべてが無駄になるわけではありません。", c: false },
+                    { t: "社会的な成功を放棄し、隠遁生活に入ること", r: "不正解。これは「隠者」の側面に近いかもしれません。", c: false }
+                ],
+                h: "壊れるのは「本物ではないもの」や「あなたを閉じ込めている殻」です。"
+            },
+            {
+                q: "大アルカナの「星」が対応する黄道十二宮の星座は何ですか？",
+                options: [
+                    { t: "水瓶座", r: "正解。「星」は水瓶座に対応し、希望、革新、宇宙的な意識との接続、そして未来へのビジョンを象徴します。", c: true },
+                    { t: "魚座", r: "不正解。魚座に対応するのは「月」です。", c: false },
+                    { t: "山羊座", r: "不正解。山羊座に対応するのは「悪魔」です。", c: false },
+                    { t: "射手座", r: "不正解。射手座に対応するのは「節制」です。", c: false }
+                ],
+                h: "壺から水を注ぐ人物が描かれることが多く、風の時代を象徴する星座です。"
+            },
+            {
+                q: "大アルカナの「月」が対応する黄道十二宮の星座は何ですか？",
+                options: [
+                    { t: "魚座", r: "正解。「月」のカードは魚座に対応し、深層心理、幻想、夢、そして境界線の曖昧な世界を象徴します。", c: true },
+                    { t: "蟹座", r: "不正解。蟹座に対応するのは「戦車」です。", c: false },
+                    { t: "蠍座", r: "不正解。蠍座に対応するのは「死神」です。", c: false },
+                    { t: "水瓶座", r: "不正解。水瓶座に対応するのは「星」です。", c: false }
+                ],
+                h: "12星座の最後であり、水のエレメントを持つ星座です。"
+            },
+            {
+                q: "大アルカナの「太陽」が象徴する心理的状態は何ですか？",
+                options: [
+                    { t: "明確な意識、成功、自己実現、喜び", r: "正解。「太陽」は意識の光が完全に当たり、隠し事のない明瞭な状態、純粋な喜び、そして成功を表します。", c: true },
+                    { t: "不安、迷い、潜在意識の恐怖", r: "不正解。これは「月」のカードの象徴です。", c: false },
+                    { t: "内省、孤独、探求", r: "不正解。これは「隠者」のカードの象徴です。", c: false },
+                    { t: "試練、忍耐、自己犠牲", r: "不正解。これは「吊るされた男」のカードの象徴です。", c: false }
+                ],
+                h: "曇りのない空の下で、子供が遊んでいるような無邪気なエネルギーです。"
+            },
+            {
+                q: "「審判」のカードが示す「復活」とは、どのような状態を指しますか？",
+                options: [
+                    { t: "過去の行いを振り返り、高次の呼びかけに応じて新しい次元へ目覚めること", r: "正解。「審判」は単なるやり直しではなく、霊的な覚醒や、古い自分を脱ぎ捨ててより高いステージへ呼ばれる（召命）ことを意味します。", c: true },
+                    { t: "失ったお金や地位が元通りに戻ること", r: "不正解。物質的な復元よりも、精神的な再生や変容に重きが置かれます。", c: false },
+                    { t: "他人を厳しく裁き、断罪すること", r: "不正解。カード名は「審判」ですが、他者を罰することではなく、自分自身の魂の決算と解放を指します。", c: false },
+                    { t: "死んだ人間が生き返ること", r: "不正解。象徴的な意味での再生であり、ゾンビのような蘇生ではありません。", c: false }
+                ],
+                h: "天使がラッパを吹き、棺桶から人々が立ち上がる絵柄の意味です。"
+            },
+            {
+                q: "大アルカナの「世界」が対応する惑星は何ですか？",
+                options: [
+                    { t: "土星", r: "正解。「世界」は土星に対応し、完成、境界の確立、一つのサイクルの完全な終了と統合を象徴します。", c: true },
+                    { t: "木星", r: "不正解。木星は発展や拡大を表し、「運命の輪」に対応します。", c: false },
+                    { t: "太陽", r: "不正解。太陽は生命力を表し、「太陽」に対応します。", c: false },
+                    { t: "月", r: "不正解。月は無意識を表し、「女教皇」や「月」に対応します。", c: false }
+                ],
+                h: "時と制限を司る惑星であり、物事を「完成」させる力を持っています。"
+            },
+            // 11. General Structure & Concepts
+            {
+                q: "カバラにおいて、セフィラ「ティファレト」が「美」と呼ばれる理由は何ですか？",
+                options: [
+                    { t: "生命の樹の中心で、慈悲（右）と峻厳（左）の柱のバランスを取っているから", r: "正解。ティファレトは中央の柱に位置し、拡大する力と制限する力を調和させることで、完全な均衡（＝美）を生み出します。", c: true },
+                    { t: "最も高い場所にあり、神の栄光を直接反映しているから", r: "不正解。最も高い場所にあるのは「ケテル」です。", c: false },
+                    { t: "物質的な豊かさと快楽を象徴しているから", r: "不正解。物質的な豊かさは「マルクト」や「ペンタクルス」に関連します。", c: false },
+                    { t: "芸術や音楽を司るセフィラだから", r: "不正解。芸術は「ネツァク」や「ホド」にも関連しますが、ティファレトの「美」は調和としての美です。", c: false }
+                ],
+                h: "極端なものの間に入り、中庸を保つ役割を持っています。"
+            },
+            {
+                q: "生命の樹において、左右の柱（慈悲と峻厳）を行き来するエネルギーの流れを何と呼びますか？",
+                options: [
+                    { t: "稲妻の閃光（Lightning Flash）", r: "正解。エネルギーはケテルからマルクトまで、ジグザグにセフィラを巡りながら下降します。その軌跡が稲妻に似ていることからこう呼ばれます。", c: true },
+                    { t: "ウロボロスの蛇", r: "不正解。ウロボロスは永遠の循環を象徴しますが、パスの名称ではありません。", c: false },
+                    { t: "ヤコブの梯子", r: "不正解。天と地を繋ぐ象徴ですが、具体的なパスの名称としては稲妻の閃光が一般的です。", c: false },
+                    { t: "ソロモンの封印", r: "不正解。六芒星のことですが、パスの名称ではありません。", c: false }
+                ],
+                h: "空から地面へ、一瞬で落ちる光の形です。"
+            },
+            {
+                q: "生命の樹の右側の柱（慈悲の柱）の頂点にあるセフィラはどれですか？",
+                options: [
+                    { t: "コクマー（知恵）", r: "正解。右側の柱は慈悲の柱と呼ばれ、その頂点には能動的な父なるエネルギー、コクマーが存在します。", c: true },
+                    { t: "ビナー（理解）", r: "不正解。ビナーは左側の柱（峻厳の柱）の頂点です。", c: false },
+                    { t: "ケテル（王冠）", r: "不正解。ケテルは中央の柱（均衡の柱）の頂点です。", c: false },
+                    { t: "ケセド（慈悲）", r: "不正解。ケセドは右側の柱にありますが、コクマーの下に位置します。", c: false }
+                ],
+                h: "ヨッドに対応する、男性的なエネルギーのセフィラです。"
+            },
+            {
+                q: "生命の樹の左側の柱（峻厳の柱）の頂点にあるセフィラはどれですか？",
+                options: [
+                    { t: "ビナー（理解）", r: "正解。左側の柱は峻厳の柱と呼ばれ、その頂点には形を与える母なるエネルギー、ビナーが存在します。", c: true },
+                    { t: "コクマー（知恵）", r: "不正解。コクマーは右側の柱の頂点です。", c: false },
+                    { t: "ゲブラー（峻厳）", r: "不正解。ゲブラーは左側の柱にありますが、ビナーの下に位置します。", c: false },
+                    { t: "ホド（栄光）", r: "不正解。ホドは左側の柱のさらに下に位置します。", c: false }
+                ],
+                h: "ヘーに対応する、女性的なエネルギーのセフィラです。"
+            },
+            {
+                q: "「愚者」が旅を始める前の「0」の状態は、カバラの概念で言うと何に近いですか？",
+                options: [
+                    { t: "アイン（無）", r: "正解。アイン（Ain）は「無」を意味し、ケテル（1）が顕現する前の、無限の可能性を秘めた未顕現の状態を指します。", c: true },
+                    { t: "マルクト（王国）", r: "不正解。マルクトは顕現の最終段階です。", c: false },
+                    { t: "クリフォト", r: "不正解。クリフォトは生命の樹の影や殻の部分を指します。", c: false },
+                    { t: "ダアト", r: "不正解。ダアトは隠された知識のセフィラです。", c: false }
+                ],
+                h: "存在すらしていない、完全なる潜在性のことです。"
+            },
+            {
+                q: "タロットの「大アルカナ」22枚は、生命の樹のどの部分に対応していますか？",
+                options: [
+                    { t: "セフィラ同士を繋ぐ22のパス（小径）", r: "正解。大アルカナは、10のセフィラを繋ぐ22本のパスに対応し、意識の変容のプロセスを表します。", c: true },
+                    { t: "10個のセフィラそのもの", r: "不正解。セフィラに対応するのは主に小アルカナの数札（1〜10）です。", c: false },
+                    { t: "4つの世界（アツィルト、ブリアー、イェツィラー、アッシャー）", r: "不正解。4つの世界はコートカードやスートに対応します。", c: false },
+                    { t: "3つのヴェール", r: "不正解。ヴェールはケテルの上にある概念です。", c: false }
+                ],
+                h: "ヘブライ文字の22文字と同じ数です。"
+            },
+            {
+                q: "コートカードの「キング」が持つ「火」の性質は、リーダーシップにおいてどのように表れますか？",
+                options: [
+                    { t: "ビジョンを示し、周囲を鼓舞して新しいプロジェクトを開始する力", r: "正解。火（ワンド/キング）は、詳細な管理よりも、方向性を示し、エネルギーを注ぎ込んで物事を動かす始動の力として表れます。", c: true },
+                    { t: "部下の感情に寄り添い、悩みを聞く受容的な態度", r: "不正解。これは「水（クイーン/カップ）」の性質に近いです。", c: false },
+                    { t: "リスクを避け、着実に実績を積み上げる慎重さ", r: "不正解。これは「土（ペイジ/ペンタクルス）」の性質に近いです。", c: false },
+                    { t: "論理的に分析し、間違いを指摘する批判的な態度", r: "不正解。これは「風（ナイト/ソード）」の性質に近い側面があります。", c: false }
+                ],
+                h: "松明を持って先頭を歩くような、エネルギッシュなリーダー像です。"
+            }
+        ];
+
+        // --- App Logic ---
+        
+        let currentMode = '';
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let wrongAnswers = [];
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function startQuiz(mode) {
+            currentMode = mode;
+            score = 0;
+            currentIndex = 0;
+            wrongAnswers = [];
+
+            let qs = [];
+            // 分割ロジック：Part1 (1-31), Part2 (32-62), All (1-62)
+            // 配列インデックスは0始まりなので注意
+            if (mode === 'part1') {
+                qs = allQuestionsDB.slice(0, 31);
+            } else if (mode === 'part2') {
+                qs = allQuestionsDB.slice(31, 62);
+            } else {
+                qs = [...allQuestionsDB];
+            }
+            
+            // ランダム出題にする
+            currentQuestions = shuffle(qs);
+
+            // UI Transition
+            document.getElementById('screen-start').classList.add('hidden');
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.remove('hidden');
+            document.getElementById('screen-quiz').classList.add('anim-fade-in');
+
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = currentQuestions[currentIndex];
+            
+            // Update UI Elements
+            document.getElementById('quiz-progress-text').textContent = `Q ${currentIndex + 1} / ${currentQuestions.length}`;
+            document.getElementById('quiz-score').textContent = score;
+            
+            const progress = ((currentIndex) / currentQuestions.length) * 100;
+            document.getElementById('quiz-progress-bar').style.width = `${progress}%`;
+
+            document.getElementById('question-text').innerHTML = q.q;
+            document.getElementById('hint-box').classList.add('hidden');
+            document.getElementById('feedback-overlay').classList.add('hidden');
+
+            // Render Options
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            // Shuffle options for display
+            const opts = shuffle([...q.options]);
+            
+            opts.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-xl bg-gray-800 hover:bg-gray-700 border border-gray-600 transition-colors duration-200 flex items-center";
+                btn.innerHTML = `<span class="flex-grow">${opt.t}</span>`;
+                btn.onclick = () => handleAnswer(opt, q);
+                container.appendChild(btn);
+            });
+
+            // Re-render MathJax
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        }
+
+        function handleAnswer(selected, questionData) {
+            // Show Feedback Overlay
+            const overlay = document.getElementById('feedback-overlay');
+            const icon = document.getElementById('feedback-icon');
+            const title = document.getElementById('feedback-title');
+            const content = document.getElementById('feedback-content');
+
+            overlay.classList.remove('hidden');
+
+            if (selected.c) {
+                score++;
+                icon.innerHTML = '✨';
+                title.innerHTML = '<span class="text-emerald-400">Correct!</span>';
+                title.className = "text-3xl font-bold mb-2";
+            } else {
+                icon.innerHTML = '🤔';
+                title.innerHTML = '<span class="text-rose-400">Incorrect...</span>';
+                title.className = "text-3xl font-bold mb-2";
+                
+                // Add to wrong answers list
+                wrongAnswers.push({
+                    q: questionData.q,
+                    myAns: selected.t,
+                    correctAns: questionData.options.find(o => o.c).t,
+                    rationale: selected.r
+                });
+            }
+
+            content.innerHTML = selected.r;
+            
+            if (!selected.c) {
+                 const correctOpt = questionData.options.find(o => o.c);
+                 content.innerHTML += `<br><br><span class="text-emerald-300 font-bold">正解: ${correctOpt.t}</span><br><span class="text-xs text-gray-400">${correctOpt.r}</span>`;
+            }
+        }
+
+        function nextQuestion() {
+            currentIndex++;
+            if (currentIndex < currentQuestions.length) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function toggleHint() {
+            const box = document.getElementById('hint-box');
+            box.textContent = currentQuestions[currentIndex].h;
+            box.classList.remove('hidden');
+        }
+
+        function showResult() {
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-result').classList.remove('hidden');
+
+            document.getElementById('result-score').textContent = score;
+            document.getElementById('result-total').textContent = currentQuestions.length;
+
+            const reviewSection = document.getElementById('review-section');
+            const reviewList = document.getElementById('review-list');
+            const perfectMsg = document.getElementById('perfect-message');
+
+            if (score === currentQuestions.length) {
+                perfectMsg.classList.remove('hidden');
+                reviewSection.classList.add('hidden');
+            } else {
+                perfectMsg.classList.add('hidden');
+                reviewSection.classList.remove('hidden');
+                reviewList.innerHTML = '';
+
+                wrongAnswers.forEach((item, idx) => {
+                    const div = document.createElement('div');
+                    div.className = "bg-gray-800/50 p-4 rounded-lg border border-gray-700";
+                    div.innerHTML = `
+                        <div class="text-xs text-gray-500 mb-1">Q.${idx + 1}</div>
+                        <div class="font-medium text-gray-200 mb-2">${item.q}</div>
+                        <div class="text-sm text-rose-400 mb-1">✖ あなたの回答: ${item.myAns}</div>
+                        <div class="text-sm text-emerald-400 mb-2">⭕ 正解: ${item.correctAns}</div>
+                        <div class="text-xs text-gray-400 bg-black/20 p-2 rounded">${item.rationale}</div>
+                    `;
+                    reviewList.appendChild(div);
+                });
+                
+                if (window.MathJax) {
+                    MathJax.typesetPromise();
+                }
+            }
+        }
+
+        function retryCurrentMode() {
+            startQuiz(currentMode);
+        }
+
+        function resetApp() {
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-start').classList.remove('hidden');
+            document.getElementById('screen-start').classList.add('anim-fade-in');
+        }
+
+    </script>
+</body>
+</html>
