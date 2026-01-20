@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>あなたにピッタリの講座は？ | 生命の樹タロット</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Zen Kaku Gothic New', sans-serif;
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            min-height: 100vh;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* カスタムチェックボックス */
+        .custom-checkbox input:checked + div {
+            background-color: #f3e8ff; /* purple-100 */
+            border-color: #9333ea; /* purple-600 */
+        }
+        .custom-checkbox input:checked + div .check-icon {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .check-icon {
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.2s ease;
+        }
+
+        .hidden {
+            display: none;
+        }
+        
+        .step-indicator {
+            height: 4px;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        /* 提案リストのスタイル */
+        .proposal-list li {
+            position: relative;
+            padding-left: 1.5em;
+            margin-bottom: 0.8em;
+            line-height: 1.6;
+        }
+        .proposal-list li::before {
+            content: "✔";
+            position: absolute;
+            left: 0;
+            color: #9333ea; /* purple-600 */
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4">
+
+    <div class="glass-card w-full max-w-lg rounded-3xl overflow-hidden relative min-h-[600px] flex flex-col">
+        
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-purple-600 to-indigo-600 p-6 text-center text-white relative">
+            <h1 class="text-2xl font-bold mb-1"><i class="fas fa-magic mr-2"></i>最適な学び方診断</h1>
+            <p class="text-purple-100 text-sm">3つのステップで分析します</p>
+            
+            <!-- Step Indicators -->
+            <div class="flex justify-center gap-2 mt-4 px-10">
+                <div id="bar-1" class="step-indicator w-1/3 bg-white/40"></div>
+                <div id="bar-2" class="step-indicator w-1/3 bg-white/40"></div>
+                <div id="bar-3" class="step-indicator w-1/3 bg-white/40"></div>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="p-6 md:p-8 flex-1 flex flex-col relative z-10 w-full overflow-y-auto">
+            
+            <!-- STEP 1: 目的・熱量 -->
+            <div id="step-1" class="fade-in w-full">
+                <div class="text-center mb-6">
+                    <span class="text-xs font-bold text-purple-600 bg-purple-100 px-3 py-1 rounded-full">STEP 1 / 3</span>
+                    <h2 class="text-xl font-bold text-gray-800 mt-2">目指す「未来」は？</h2>
+                    <p class="text-xs text-gray-500">当てはまるもの全てにチェックを入れてください</p>
+                </div>
+                
+                <div class="space-y-3 mb-8">
+                    <label class="custom-checkbox cursor-pointer block group">
+                        <input type="checkbox" class="hidden" name="step1" value="pro" onchange="checkSelection('step1')">
+                        <div class="border-2 border-gray-200 rounded-xl p-4 flex items-center transition-all group-hover:border-purple-300">
+                            <div class="w-6 h-6 rounded-full border-2 border-purple-400 mr-4 flex items-center justify-center bg-white flex-shrink-0">
+                                <i class="fas fa-check text-purple-600 check-icon text-sm"></i>
+                            </div>
+                            <span class="text-gray-700 font-bold text-sm">本気でプロを目指したい・極めたい</span>
+                        </div>
+                    </label>
+
+                    <label class="custom-checkbox cursor-pointer block group">
+                        <input type="checkbox" class="hidden" name="step1" value="hobby" onchange="checkSelection('step1')">
+                        <div class="border-2 border-gray-200 rounded-xl p-4 flex items-center transition-all group-hover:border-purple-300">
+                            <div class="w-6 h-6 rounded-full border-2 border-purple-400 mr-4 flex items-center justify-center bg-white flex-shrink-0">
+                                <i class="fas fa-check text-purple-600 check-icon text-sm"></i>
+                            </div>
+                            <span class="text-gray-700 font-bold text-sm">自分の悩み解決や、趣味として楽しみたい</span>
+                        </div>
+                    </label>
+                    
+                    <label class="custom-checkbox cursor-pointer block group">
+                        <input type="checkbox" class="hidden" name="step1" value="trial" onchange="checkSelection('step1')">
+                        <div class="border-2 border-gray-200 rounded-xl p-4 flex items-center transition-all group-hover:border-purple-300">
+                            <div class="w-6 h-6 rounded-full border-2 border-purple-400 mr-4 flex items-center justify-center bg-white flex-shrink-0">
+                                <i class="fas fa-check text-purple-600 check-icon text-sm"></i>
+                            </div>
+                            <span class="text-gray-700 font-bold text-sm">まずはどんなものか、ちょっと覗いてみたい</span>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="mt-auto">
+                    <button onclick="nextStep(2)" id="btn-step1" class="bg-gray-400 text-white font-bold py-4 px-10 rounded-full w-full text-lg transition-all" disabled>
+                        次へ進む
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 2: スタイル・環境 -->
+            <div id="step-2" class="hidden w-full">
+                <div class="text-center mb-6">
+                    <span class="text-xs font-bold text-purple-600 bg-purple-100 px-3 py-1 rounded-full">STEP 2 / 3</span>
+                    <h2 class="text-xl font-bold text-gray-800 mt-2">希望の「学び方」は？</h2>
+                    <p class="text-xs text-gray-500">複数選択OKです</p>
+                </div>
+                
+                <div class="space-y-3 mb-8">
+                    <label class="custom-checkbox cursor-pointer block group">
+                        <input type="checkbox" class="hidden" name="step2" value="direct" onchange="checkSelection('step2')">
+                        <div class="border-2 border-gray-200 rounded-xl p-4 flex items-center transition-all group-hover:border-purple-300">
+                            <div class="w-6 h-6 rounded-full border-2 border-purple-400 mr-4 flex items-center justify-center bg-white flex-shrink-0">
+                                <i class="fas fa-check text-purple-600 check-icon text-sm"></i>
+                            </div>
+                            <span class="text-gray-700 font-bold text-sm">先生から直接、手厚い指導を受けたい</span>
+                        </div>
+                    </label>
+
+                    <label class="custom-checkbox cursor-pointer block group">
+                        <input type="checkbox" class="hidden" name="step2" value="self" onchange="checkSelection('step2')">
+                        <div class="border-2 border-gray-200 rounded-xl p-4 flex items-center transition-all group-hover:border-purple-300">
+                            <div class="w-6 h-6 rounded-full border-2 border-purple-400 mr-4 flex items-center justify-center bg-white flex-shrink-0">
+                                <i class="fas fa-check text-purple-600 check-icon text-sm"></i>
+                            </div>
+                            <span class="text-gray-700 font-bold text-sm">動画やテキストを見て、自分のペースで進めたい</span>
+                        </div>
+                    </label>
+                    
+                    <label class="custom-checkbox cursor-pointer block group">
+                        <input type="checkbox" class="hidden" name="step2" value="tool" onchange="checkSelection('step2')">
+                        <div class="border-2 border-gray-200 rounded-xl p-4 flex items-center transition-all group-hover:border-purple-300 bg-purple-50/50">
+                            <div class="w-6 h-6 rounded-full border-2 border-purple-400 mr-4 flex items-center justify-center bg-white flex-shrink-0">
+                                <i class="fas fa-check text-purple-600 check-icon text-sm"></i>
+                            </div>
+                            <span class="text-gray-700 font-bold text-sm">便利な「鑑定ツール」が絶対に欲しい！</span>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="mt-auto flex gap-3">
+                    <button onclick="nextStep(1)" class="bg-gray-200 text-gray-600 font-bold py-4 px-6 rounded-full w-1/3 transition-all hover:bg-gray-300">
+                        戻る
+                    </button>
+                    <button onclick="nextStep(3)" id="btn-step2" class="bg-gray-400 text-white font-bold py-4 px-10 rounded-full w-2/3 transition-all" disabled>
+                        次へ進む
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 3: 予算・現実 -->
+            <div id="step-3" class="hidden w-full">
+                <div class="text-center mb-6">
+                    <span class="text-xs font-bold text-purple-600 bg-purple-100 px-3 py-1 rounded-full">STEP 3 / 3</span>
+                    <h2 class="text-xl font-bold text-gray-800 mt-2">予算や期間のイメージは？</h2>
+                    <p class="text-xs text-gray-500">正直な気持ちを選んでください</p>
+                </div>
+                
+                <div class="space-y-3 mb-8">
+                    <label class="custom-checkbox cursor-pointer block group">
+                        <input type="checkbox" class="hidden" name="step3" value="high" onchange="checkSelection('step3')">
+                        <div class="border-2 border-gray-200 rounded-xl p-4 flex items-center transition-all group-hover:border-purple-300">
+                            <div class="w-6 h-6 rounded-full border-2 border-purple-400 mr-4 flex items-center justify-center bg-white flex-shrink-0">
+                                <i class="fas fa-check text-purple-600 check-icon text-sm"></i>
+                            </div>
+                            <span class="text-gray-700 font-bold text-sm">しっかり投資して、最短で結果を出したい</span>
+                        </div>
+                    </label>
+
+                    <label class="custom-checkbox cursor-pointer block group">
+                        <input type="checkbox" class="hidden" name="step3" value="sub" onchange="checkSelection('step3')">
+                        <div class="border-2 border-gray-200 rounded-xl p-4 flex items-center transition-all group-hover:border-purple-300">
+                            <div class="w-6 h-6 rounded-full border-2 border-purple-400 mr-4 flex items-center justify-center bg-white flex-shrink-0">
+                                <i class="fas fa-check text-purple-600 check-icon text-sm"></i>
+                            </div>
+                            <span class="text-gray-700 font-bold text-sm">初期費用を抑えて、月額制などで長く続けたい</span>
+                        </div>
+                    </label>
+                    
+                    <label class="custom-checkbox cursor-pointer block group">
+                        <input type="checkbox" class="hidden" name="step3" value="low" onchange="checkSelection('step3')">
+                        <div class="border-2 border-gray-200 rounded-xl p-4 flex items-center transition-all group-hover:border-purple-300">
+                            <div class="w-6 h-6 rounded-full border-2 border-purple-400 mr-4 flex items-center justify-center bg-white flex-shrink-0">
+                                <i class="fas fa-check text-purple-600 check-icon text-sm"></i>
+                            </div>
+                            <span class="text-gray-700 font-bold text-sm">とにかく安く、リスクなしで始めたい</span>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="mt-auto flex gap-3">
+                    <button onclick="nextStep(2)" class="bg-gray-200 text-gray-600 font-bold py-4 px-6 rounded-full w-1/3 transition-all hover:bg-gray-300">
+                        戻る
+                    </button>
+                    <button onclick="calculateResult()" id="btn-step3" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold py-4 px-10 rounded-full w-2/3 shadow-lg hover:shadow-xl transition-all" disabled>
+                        診断する
+                    </button>
+                </div>
+            </div>
+
+
+            <!-- LOADING SCREEN -->
+            <div id="step-loading" class="hidden w-full text-center h-full flex flex-col justify-center items-center py-20">
+                <div class="mb-4">
+                    <i class="fas fa-circle-notch fa-spin text-5xl text-purple-600"></i>
+                </div>
+                <h2 class="text-xl font-bold text-gray-800">最適なコースを分析中...</h2>
+                <p class="text-gray-500 mt-2">あなたの状況を総合的に判断しています</p>
+            </div>
+
+
+            <!-- RESULT SCREEN -->
+            <div id="step-result" class="hidden w-full fade-in pb-4">
+                <p class="text-gray-500 mb-2 font-bold tracking-widest text-sm text-center">DIAGNOSIS RESULT</p>
+                
+                <!-- 結果カード -->
+                <div class="bg-white border-2 border-purple-100 rounded-2xl p-6 mb-6 shadow-lg text-left">
+                    <h2 class="text-lg font-bold text-gray-600 mb-1">あなたにはこれがベスト！</h2>
+                    <h2 id="result-title" class="text-2xl md:text-3xl font-bold text-purple-700 mb-4">結果タイトル</h2>
+                    
+                    <!-- タグ -->
+                    <div id="result-tags" class="flex flex-wrap gap-2 mb-6">
+                        <!-- JSで生成 -->
+                    </div>
+
+                    <!-- アドバイスコンテンツ -->
+                    <div class="space-y-4 mb-8">
+                        <!-- 独学の難しさ (Trap) -->
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                            <h3 class="text-sm font-bold text-gray-600 mb-2"><i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>現状の課題</h3>
+                            <p id="advice-trap" class="text-sm text-gray-600 leading-relaxed">ここにつらさが入る</p>
+                        </div>
+
+                        <!-- デメリット (Demerit) -->
+                        <div class="bg-red-50 p-4 rounded-xl border border-red-200">
+                            <h3 class="text-sm font-bold text-red-600 mb-2"><i class="fas fa-info-circle mr-2"></i>知っておいてほしい点（デメリット）</h3>
+                            <p id="advice-demerit" class="text-sm text-gray-700 leading-relaxed font-medium">ここにデメリットが入る</p>
+                        </div>
+
+                        <!-- 解決策と未来 (Solution) -->
+                        <div class="bg-purple-50 p-4 rounded-xl border border-purple-200">
+                            <h3 class="text-sm font-bold text-purple-700 mb-2"><i class="fas fa-lightbulb text-yellow-400 mr-2"></i>ご提案の理由・メリット</h3>
+                            <div id="advice-solution" class="text-sm text-gray-700 leading-relaxed font-medium">
+                                <!-- HTMLリストがここに挿入されます -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- メッセージ -->
+                    <p class="text-sm text-gray-500 mb-4 text-center">詳しいカリキュラムや、<br>本当に自分に合っているか気になりませんか？</p>
+
+                    <!-- LINEボタン -->
+                    <a href="https://m08vct9h.autosns.app/line" target="_blank" class="block w-full bg-[#06c755] text-white font-bold py-4 rounded-xl hover:opacity-90 transition-all flex items-center justify-center shadow-md mb-3">
+                        <i class="fab fa-line text-2xl mr-2"></i> LINEで相談する（無料）
+                    </a>
+
+                    <!-- ストアカボタン -->
+                    <a href="https://www.street-academy.com/steachers/675087?conversion_name=direct_message&tracking_code=249a155f5391effef065989413d1517e" target="_blank" class="block w-full bg-white text-gray-700 font-bold py-3 rounded-xl border-2 border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center justify-center">
+                        <i class="fas fa-external-link-alt text-gray-500 mr-2"></i> ストアカで講座一覧を見る
+                    </a>
+                    
+                    <p class="text-xs text-gray-400 mt-2 text-center">※無理な勧誘はしませんのでご安心ください</p>
+                </div>
+
+                <div class="space-y-3">
+                    <button onclick="location.reload()" class="w-full bg-gray-100 text-gray-600 font-bold py-3 rounded-xl hover:bg-gray-200 transition-colors">
+                        条件を変えてもう一度診断する
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // コースデータ定義
+        const courses = {
+            master: {
+                id: "master",
+                title: "【プロ養成】マスター伴走プラン",
+                tags: ["最短でプロへ", "完全伴走", "ツール完備"],
+                trap: "生命の樹は奥が深く、独学だと「解釈の迷路」にハマり、何年も時間を無駄にしてしまうリスクがあります。本気でプロを目指すなら、回り道は禁物です。",
+                demerit: "講師が直接伴走するため、どうしても受講費用は高額になります。「趣味程度でいい」「安く済ませたい」という方にはオーバースペックかもしれません。",
+                solution: `
+                    <ul class="proposal-list">
+                        <li><strong>選定理由：</strong>あなたが選んだ「プロ志向」「直接指導」「しっかり投資」という条件に、唯一かつ完璧に合致するプランです。</li>
+                        <li><strong>講師の伴走：</strong>私が190万円以上かけて体系化した「正解ルート」を直接インストールします。</li>
+                        <li><strong>最強ツール：</strong>他にはない「鑑定ツール」が使い放題。これさえあれば、複雑な計算も暗記も不要でプロとして活動できます。</li>
+                    </ul>
+                `
+            },
+            labo_pro: { 
+                id: "labo",
+                title: "【研究所】動画学習＋お守りプラン",
+                tags: ["まずはここから", "質問し放題", "プロへの一歩"],
+                trap: "プロになりたい気持ちはあるものの、いきなり高額な投資をするのは不安ですよね。かといって、完全独学ではプロレベルに到達するのは至難の業です。",
+                demerit: "あくまで「動画学習」が主体です。マスターコースのように「手取り足取り」教えてもらえるわけではないので、ある程度自分で学習計画を立てる必要があります。（ツールも付属しません）",
+                solution: `
+                    <ul class="proposal-list">
+                        <li><strong>選定理由：</strong>「プロになりたい」情熱と「費用は抑えたい」という現実的な判断のバランスを取った、賢い選択です。</li>
+                        <li><strong>安心のサポート：</strong>オンライン個人指導はありませんが、分からないことは「質問・添削」がなんと無料！独学の不安を解消します。</li>
+                        <li><strong>初期投資を抑制：</strong>入会金はかかりますが、マスターコースに比べれば初期費用を抑えてスタートできます。資金ができたタイミングで、後から移行も可能です！</li>
+                    </ul>
+                `
+            },
+            labo: {
+                id: "labo",
+                title: "【研究所】動画学習＋お守りプラン",
+                tags: ["動画で見放題", "質問し放題", "プロの知恵"],
+                trap: "動画を見るだけでは、疑問が湧いた時に誰にも聞けず、間違った解釈のまま進んでしまうリスクがあります。",
+                demerit: "便利な「鑑定ツール」は付属しません。また、受動的に動画を見るだけでなく、自分から質問する積極性がないと、ただの動画視聴で終わってしまう可能性があります。",
+                solution: `
+                    <ul class="proposal-list">
+                        <li><strong>選定理由：</strong>「マイペースに学びたい」けれど「独りぼっちは不安」という方に最適です。</li>
+                        <li><strong>安心のサポート：</strong>オンライン個人指導はありませんが、「ここどういうこと？」と思ったら「質問・添削」が無料で受けられます。</li>
+                        <li><strong>孤独じゃない：</strong>いつでもプロに頼れる環境があるので、安心して自分のペースで学習を続けられます。</li>
+                    </ul>
+                `
+            },
+            intro: {
+                id: "intro",
+                title: "【入門】基礎固めレッスン",
+                tags: ["まずはここから", "基礎の土台", "全体像把握"],
+                trap: "いきなり難しい理論を詰め込んでも、全体像が見えていないと挫折の原因に。まずは「地図」を広げることが大事です。",
+                demerit: "あくまで「入門（基礎）」なので、これだけでプロの占い師として活動するのは難しいです。本格的に活動するには、次のステップに進む必要があります。",
+                solution: `
+                    <ul class="proposal-list">
+                        <li><strong>選定理由：</strong>「まずは基礎をしっかり固めたい」「体系的に学びたい」という希望にマッチします。</li>
+                        <li><strong>地図獲得：</strong>生命の樹の全体構造やエネルギーの流れを、対話形式で楽しくインプット。ここさえ押さえれば、その後の学習効率が段違いに上がります。</li>
+                        <li><strong>挫折防止：</strong>最初に全体像（地図）を手に入れることで、迷子にならずに学び進められます。</li>
+                    </ul>
+                `
+            },
+            archive: {
+                id: "archive",
+                title: "【動画学習】アーカイブプラン",
+                tags: ["動画で見放題", "安価にスタート", "雰囲気を知る"],
+                trap: "「自分にできるかな？」と不安なまま進めるのは勇気がいりますよね。",
+                demerit: "講師への質問権はありません。また、全ての動画が見放題ではなく「月替わり」なので、見たいテーマが今すぐ見られるとは限りません。",
+                solution: `
+                    <ul class="proposal-list">
+                        <li><strong>選定理由：</strong>「まずは安く始めたい」「雰囲気を知りたい」という慎重派のあなたにおすすめです。</li>
+                        <li><strong>圧倒的コスパ：</strong>ランチ＋デザートくらいのお値段で、月替わりの厳選動画が3本も見られます（リアル勉強会は1回1,800円なので超お得！）。</li>
+                        <li><strong>お試し感覚：</strong>実際の勉強会の空気感を、動画でこっそり覗き見できます。合わなければすぐ辞められるので安心です。</li>
+                    </ul>
+                `
+            },
+            trial: {
+                id: "trial",
+                title: "【体験】お試し勉強会プラン",
+                tags: ["1枚引き解説", "占われる感覚", "手軽に参加"],
+                trap: "「いきなり講座はハードルが高い…」「どんな雰囲気か知りたい」と迷っていませんか？",
+                demerit: "体系的な学習の場ではありません。「占ってもらう」エンタメ要素が強いので、がっつり理論を学びたい人には物足りないかもしれません。",
+                solution: `
+                    <ul class="proposal-list">
+                        <li><strong>選定理由：</strong>「勉強というより体験したい」「占ってほしい」という気軽な気持ちにピッタリです。</li>
+                        <li><strong>難しいことナシ：</strong>カード1枚引き体験がメイン！まるで占ってもらうような感覚で楽しめます。</li>
+                        <li><strong>理論もチラ見せ：</strong>メインは体験ですが、関連する生命の樹の理論解説も部分的に行います。楽しみながら学びにも触れられるお得な場です。</li>
+                    </ul>
+                `
+            }
+        };
+
+        // 状態管理
+        let answers = {
+            step1: [], // 目的
+            step2: [], // スタイル
+            step3: []  // 予算
+        };
+
+        // UI操作: 選択時にボタン活性化＆バー更新
+        function checkSelection(stepId) {
+            const checks = document.querySelectorAll(`input[name="${stepId}"]:checked`);
+            const btn = document.getElementById(`btn-${stepId}`);
+            const vals = Array.from(checks).map(c => c.value);
+            
+            answers[stepId] = vals; // 保存
+
+            // 1つ以上選択でボタン活性化
+            if (checks.length > 0) {
+                btn.disabled = false;
+                btn.classList.remove('bg-gray-400');
+                if(stepId === 'step3') {
+                     btn.classList.add('bg-gradient-to-r', 'from-purple-600', 'to-indigo-600');
+                } else {
+                     btn.classList.add('bg-purple-600');
+                }
+            } else {
+                btn.disabled = true;
+                btn.classList.add('bg-gray-400');
+                if(stepId === 'step3') {
+                     btn.classList.remove('bg-gradient-to-r', 'from-purple-600', 'to-indigo-600');
+                } else {
+                     btn.classList.remove('bg-purple-600');
+                }
+            }
+        }
+
+        function nextStep(targetStep) {
+            // 全非表示
+            document.getElementById('step-1').classList.add('hidden');
+            document.getElementById('step-2').classList.add('hidden');
+            document.getElementById('step-3').classList.add('hidden');
+
+            // ターゲット表示
+            const targetEl = document.getElementById(`step-${targetStep}`);
+            targetEl.classList.remove('hidden');
+            targetEl.classList.add('fade-in');
+
+            // バー更新
+            updateBars(targetStep);
+        }
+
+        function updateBars(currentStep) {
+            for (let i = 1; i <= 3; i++) {
+                const bar = document.getElementById(`bar-${i}`);
+                if (i <= currentStep) {
+                    bar.classList.remove('bg-white/40');
+                    bar.classList.add('bg-white');
+                } else {
+                    bar.classList.add('bg-white/40');
+                    bar.classList.remove('bg-white');
+                }
+            }
+        }
+
+        // ロジック判定（ここが重要！）
+        function calculateResult() {
+            // データ取得
+            const s1 = answers.step1; // pro, hobby, trial
+            const s2 = answers.step2; // direct, self, tool
+            const s3 = answers.step3; // high, sub, low
+
+            let resultKey = "archive"; // デフォルト
+
+            // フラグ確認
+            const isPro = s1.includes('pro');
+            const wantsTool = s2.includes('tool');
+            const wantsDirect = s2.includes('direct');
+            const isHighBudget = s3.includes('high');
+            const isLowBudget = s3.includes('low');
+            
+            // --- 判定ロジック ---
+
+            // 1. 最強条件: ツール必須なら問答無用でマスター
+            //    （ただし、明らかに予算がない場合は相談誘導したいが、ツールの価値を優先）
+            if (wantsTool) {
+                resultKey = "master";
+            }
+            // 2. プロ志向の場合の分岐
+            else if (isPro) {
+                if (isHighBudget) {
+                    // プロ＆金ある → マスター
+                    resultKey = "master";
+                } else if (isLowBudget) {
+                    // プロ＆金ない → 研究所（プロ用STEP UP）
+                    // ここが今回のキモ！「プロになりたいけど今は...」を救う
+                    resultKey = "labo_pro";
+                } else {
+                    // 予算普通（サブスク等）
+                    if (wantsDirect) {
+                        // 直接習いたいなら入門かマスターだが、プロ志向ならマスター推しか、入門からか。
+                        // ここは「入門」で基礎固めを提案
+                        resultKey = "intro";
+                    } else {
+                        // 独学OKなら研究所
+                        resultKey = "labo_pro";
+                    }
+                }
+            }
+            // 3. 趣味・悩み解決の場合
+            else if (s1.includes('hobby')) {
+                if (wantsDirect) {
+                    resultKey = "intro";
+                } else if (s2.includes('self')) {
+                    // 独学派
+                    if (s3.includes('low')) {
+                        resultKey = "archive";
+                    } else {
+                        resultKey = "labo";
+                    }
+                } else {
+                    // どちらでもない、とりあえず
+                    resultKey = "labo";
+                }
+            }
+            // 4. とりあえず体験
+            else {
+                if (s3.includes('low') || s1.includes('trial')) {
+                    // さらに分岐：交流したいか動画か
+                    // ここではシンプルにお試し勉強会を推す
+                    resultKey = "trial";
+                } else {
+                    resultKey = "archive";
+                }
+            }
+
+            // 画面表示
+            showLoadingAndResult(resultKey);
+        }
+
+        function showLoadingAndResult(courseKey) {
+            document.getElementById('step-3').classList.add('hidden');
+            document.getElementById('step-loading').classList.remove('hidden');
+
+            setTimeout(() => {
+                document.getElementById('step-loading').classList.add('hidden');
+                
+                const data = courses[courseKey];
+                document.getElementById('result-title').innerText = data.title;
+                document.getElementById('advice-trap').innerText = data.trap;
+                document.getElementById('advice-demerit').innerText = data.demerit; // デメリット挿入
+                // HTMLとして挿入するように変更 (リスト表示のため)
+                document.getElementById('advice-solution').innerHTML = data.solution;
+                
+                const tagBox = document.getElementById('result-tags');
+                tagBox.innerHTML = '';
+                data.tags.forEach(tag => {
+                    const span = document.createElement('span');
+                    span.className = "text-xs bg-purple-100 text-purple-700 px-3 py-1 rounded-full font-bold";
+                    span.innerText = tag;
+                    tagBox.appendChild(span);
+                });
+
+                document.getElementById('step-result').classList.remove('hidden');
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
