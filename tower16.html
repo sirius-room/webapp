@@ -33,7 +33,7 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-700 relative overflow-hidden min-h-screen flex flex-col justify-center items-center p-4">
+<body class="bg-slate-50 text-slate-700 relative min-h-screen flex flex-col items-center py-8">
 
     <!-- 背景装飾 -->
     <div class="fixed top-0 left-0 w-full h-full bg-gradient-to-br from-sky-100 via-blue-50 to-indigo-100 -z-20"></div>
@@ -44,7 +44,7 @@
     <div class="fixed bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-purple-200/40 rounded-full blur-[80px] animate-pulse-slow -z-10" style="animation-delay: 2s;"></div>
 
     <!-- アプリのメインコンテナ -->
-    <div id="app-container" class="max-w-2xl w-full relative z-10">
+    <div id="app-container" class="max-w-2xl w-full relative z-10 px-4">
         <!-- ここにJavaScriptでコンテンツが描画されます -->
     </div>
 
@@ -245,7 +245,7 @@
                 </div>
 
                 <!-- 解説エリア (初期は非表示) -->
-                <div id="explanation-area" class="hidden animate-fade-in">
+                <div id="explanation-area" class="hidden animate-fade-in pb-10">
                     <div class="bg-gradient-to-r from-white/80 to-blue-50/80 border border-white/60 rounded-2xl p-6 mb-6 shadow-lg backdrop-blur-md relative overflow-hidden">
                       <div class="absolute top-0 left-0 w-1 h-full bg-cyan-400"></div>
                       <div class="flex items-start gap-4">
