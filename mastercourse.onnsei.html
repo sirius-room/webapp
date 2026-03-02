@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>生命の樹とタロット 復習クイズ</title>
+  
+  <!-- Tailwind CSS (デザイン用) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- React & ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  
+  <!-- Babel (ブラウザ上でReactのJSXを変換するため) -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-gradient-to-br from-indigo-50 to-purple-100 text-slate-800 font-sans min-h-screen">
+  
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    // --- アイコンコンポーネント (LucideのSVGを直接埋め込み) ---
+    const SparklesIcon = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+    );
+    const PlayIcon = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polygon points="6 3 20 12 6 21 6 3"/></svg>
+    );
+    const CheckCircleIcon = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+    );
+    const XCircleIcon = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+    );
+    const ChevronRightIcon = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m9 18 6-6-6-6"/></svg>
+    );
+    const RotateCcwIcon = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+    );
+
+    // --- クイズデータ ---
+    const quizData = [
+      {
+        question: "講座を始めるにあたり、「生命の樹」の難しさについてどのように語られていましたか？",
+        options: [
+          "誰でもすぐに理解できる簡単なもの",
+          "少し難しいが暗記すればすぐ分かる",
+          "難しくて普通であり、すぐに理解できない方が多い",
+          "一度理解すれば二度と忘れない"
+        ],
+        correctIndex: 2,
+        explanation: "生命の樹は難しくて当たり前であり、すぐに理解できる人の方が少ない、分からないと感じるのはごく普通のことだと語られています。"
+      },
+      {
+        question: "学習を進める上での「正解のルート」とは何だと言われていましたか？",
+        options: [
+          "完璧に理解できるまでテキストを読む",
+          "「やる→分からない→聞く」を繰り返す",
+          "分からないことは飛ばして先に進む",
+          "とにかくひたすら暗記する"
+        ],
+        correctIndex: 1,
+        explanation: "「やってみる、分からない、もう1回やってみる、それでも分からないから聞く」という繰り返しが生命の樹の学びにおける正解のルート（一番の近道）です。"
+      },
+      {
+        question: "「分からない」と感じた時、それは何を意味していると言われていましたか？",
+        options: [
+          "タロットに向いていないサイン",
+          "勉強不足のサイン",
+          "生命の樹の知識に触れている大切なサイン",
+          "講師の説明が悪いサイン"
+        ],
+        correctIndex: 2,
+        explanation: "「分からない」ということは、ちゃんと生命の樹の知識に触れているという大切なサインです。今は分からなくても触っているだけで十分だとされています。"
+      },
+      {
+        question: "生命の樹の学び方は、どのような形に例えられていましたか？",
+        options: [
+          "ジェットコースターのように急上昇する",
+          "階段式にじわじわ1歩ずつ着実に登る",
+          "パズルのようにピースを暗記して埋めていく",
+          "川の流れのように自然と身につく"
+        ],
+        correctIndex: 1,
+        explanation: "漢字や英単語を暗記するように覚えるのではなく、階段式にじわじわ着実に登っていく学び方だと表現されていました。"
+      },
+      {
+        question: "「分からない期間」が長く続いた後、どのような瞬間がやってくると言われていましたか？",
+        options: [
+          "ある日突然、一気に情報が繋がる瞬間",
+          "完全に諦めてしまう瞬間",
+          "別の占い方法に変えたくなる瞬間",
+          "講師に怒られる瞬間"
+        ],
+        correctIndex: 0,
+        explanation: "分からない期間に触れていた情報が確実に積み上がっており、ある日突然「そういうことか！」と一気に繋がる瞬間（レベルアップの瞬間）が必ず来ると語られています。"
+      },
+      {
+        question: "生命の樹の理解には3つの段階があると言われていましたが、「全く分からない」「頭では分かる」の次に来る最後の段階は何ですか？",
+        options: [
+          "誰かに教えられるようになる",
+          "完全に腹落ちする（自分の中にインストールする）",
+          "本を見ずにリーディングできる",
+          "全てのカードの名前を言える"
+        ],
+        correctIndex: 1,
+        explanation: "何回も触れて少しずつ自分の中に落とし込み、概念を完全に「腹落ち」させて自分の中に「インストール」する状態が最終段階です。"
+      },
+      {
+        question: "分からないことをそのまま放置してしまうと、どうなってしまうと言われていましたか？",
+        options: [
+          "違う意味で覚えてしまう",
+          "インストールが中断され、上辺だけで使うことになってしまう",
+          "タロットカードが使えなくなる",
+          "講師からのサポートが受けられなくなる"
+        ],
+        correctIndex: 1,
+        explanation: "分からないまま放置すると、概念を腹落ちさせる（インストールする）プロセスが中断され、本質を理解しないまま上辺だけで使うことになってしまいます。"
+      },
+      {
+        question: "分からないことが出てきた時の、理想的な学習の進め方はどれですか？",
+        options: [
+          "すぐに講師に聞く",
+          "まず自分で調べ・考え、それでも分からなければ講師に聞く",
+          "分かるまで何ヶ月でも自分で考え続ける",
+          "他の受講生に正解を聞く"
+        ],
+        correctIndex: 1,
+        explanation: "まずは自分で資料やコンテンツを使って調べたり考えたりしてみて、それでも分からない時に講師に聞く、という流れが理想的だと語られています。"
+      },
+      {
+        question: "学びの「インストール（腹落ち）」を止めてしまうブレーキになる気持ちはどれですか？",
+        options: [
+          "「もっと知りたい」という好奇心",
+          "「分からない」と感じる気持ち",
+          "「どうせできない」「自分には無理だ」と思う気持ち",
+          "「とりあえずやってみよう」という気持ち"
+        ],
+        correctIndex: 2,
+        explanation: "分からないと感じるのは順調な証拠ですが、「やっぱりできない」「理解するのは無理だ」と諦めてしまう気持ちは、成長を止めるブレーキになってしまいます。"
+      },
+      {
+        question: "この講座における「占い師の本当の役割」とは何だと言われていましたか？",
+        options: [
+          "相談者の未来を正確に言い当てること",
+          "相談者の悩みを解決する具体的な指示を出すこと",
+          "相談者自身が悩みの根っこに気づくお手伝いをすること",
+          "相談者の代わりに決断してあげること"
+        ],
+        correctIndex: 2,
+        explanation: "占い師が決めるのではなく、カードの象徴や生命の樹の概念を伝えることで、相談者自身が自分の制限や思考パターンに気づくお手伝いをすることが本来の役割です。"
+      },
+      {
+        question: "相談者の気づきに対して、占い師はどのようにサポートするべきだと言われていましたか？",
+        options: [
+          "占い師の意見で正してあげる",
+          "丁寧に紐解き、広げて、分かりやすく言語化してあげる",
+          "相談者が自分で解決するまで黙って見守る",
+          "他のカードを引き直して別の答えを探す"
+        ],
+        correctIndex: 1,
+        explanation: "相談者の中で起こった気づきを、占い師が丁寧に紐解き、広げて、言語化してあげる作業が重要だと語られています。"
+      },
+      {
+        question: "リーディングが自然とできるようになるために、一番最初に作るべき「土台」とは何ですか？",
+        options: [
+          "トークスキルを磨くこと",
+          "直感力を鍛えること",
+          "たくさんの人を占って経験を積むこと",
+          "カードと生命の樹の概念の説明がしっかりできるようになること"
+        ],
+        correctIndex: 3,
+        explanation: "なんとなくリーディングしようとするのではなく、まずはカードの意味や生命の樹での場所の概念をしっかり説明できるようになることがファーストステップ（土台）です。"
+      },
+      {
+        question: "命術（西洋占星術など）と卜術（タロット）は、それぞれ何に例えられていましたか？",
+        options: [
+          "命術は「海」、卜術は「山」",
+          "命術は「地図」、卜術は「天気予報」",
+          "命術は「時計」、卜術は「カレンダー」",
+          "命術は「小説」、卜術は「新聞」"
+        ],
+        correctIndex: 1,
+        explanation: "生年月日で決まっている変わらない命術は「地図」、今この瞬間で一瞬一瞬変化する卜術は「天気予報」に例えられていました。"
+      },
+      {
+        question: "命術と卜術（タロット）のリーディングの考え方の違いについて、正しい説明はどれですか？",
+        options: [
+          "命術は直感で読み、卜術は論理で読む",
+          "命術は「こういう人」と資質を読み、卜術は決めつけずに「今この瞬間何が起きているか」を読む",
+          "命術は過去を読み、卜術は未来を読む",
+          "命術は全体の流れを読み、卜術は性格だけを読む"
+        ],
+        correctIndex: 1,
+        explanation: "命術は変わらない資質やタイプがはっきり出ますが、タロット（卜術）は「このカードが出たからこういう人」と決めつけるのではなく、今この瞬間何が起きているかの「流れ」を読むことが大切です。"
+      },
+      {
+        question: "タロットと生命の樹の世界において、リーディングで大切にするべきことは何だと言われていましたか？",
+        options: [
+          "絶対的な正解を探すこと",
+          "相談者の望む答えを出すこと",
+          "正解を探すのではなく、流れを読んでいくこと",
+          "占い師の直感を信じ切ること"
+        ],
+        correctIndex: 2,
+        explanation: "タロットは正解を探すツールではなく、今この瞬間のエネルギーの変化や流れを読んでいくことがタロットの魅力であり、大切な姿勢だと語られています。"
+      },
+      {
+        question: "タロットの4つのスートは、4つのエレメントに対応しています。正しい組み合わせはどれですか？",
+        options: [
+          "火＝ワンド、水＝カップ、風＝ソード、土＝ペンタクル",
+          "火＝ソード、水＝カップ、風＝ワンド、土＝ペンタクル",
+          "火＝ワンド、水＝ペンタクル、風＝ソード、土＝カップ",
+          "火＝カップ、水＝ソード、風＝ペンタクル、土＝ワンド"
+        ],
+        correctIndex: 0,
+        explanation: "4つのスートは、それぞれ火（ワンド）、水（カップ）、風（ソード）、土（ペンタクル）のエネルギーを表しています。"
+      },
+      {
+        question: "スートの「次元が低くなる（火→水→風→土）」というのは、どういう意味だと言われていましたか？",
+        options: [
+          "エネルギーの価値が下がること",
+          "悪い意味合いが強くなること",
+          "情報量が制限されて少なくなること",
+          "直感から遠ざかること"
+        ],
+        correctIndex: 2,
+        explanation: "次元が高い・低いというのは「良い・悪い」ではなく、抽象的で情報量が多い状態（次元が高い）から、言葉や形になって情報が制限される状態（次元が低い）への変化を意味しています。"
+      },
+      {
+        question: "火（ワンド）のエネルギーの特徴として正しいものはどれですか？",
+        options: [
+          "思考や分析を表し、論理的である",
+          "感情やイマジネーションを表し、愛情深い",
+          "情熱や生命エネルギーを表し、言語化しにくく情報量が一番多い",
+          "肉体や現実を表し、目に見える形がある"
+        ],
+        correctIndex: 2,
+        explanation: "火（ワンド）は「なぜ生きているか」「なぜそうしたいのか」という情熱や意志、生命エネルギーです。抽象的で言語化しにくいため、一番情報量が多い（次元が高い）とされています。"
+      },
+      {
+        question: "水（カップ）のエネルギーが表すものは何だと言われていましたか？",
+        options: [
+          "思考・理性",
+          "感情・愛情・イマジネーション",
+          "肉体・行動",
+          "情熱・衝動"
+        ],
+        correctIndex: 1,
+        explanation: "水（カップ）は感情や愛情、心の動きを表します。火の「生きているという生命エネルギー」があってこそ生まれる感情であり、火よりも少し情報が制限されます。"
+      },
+      {
+        question: "風（ソード）のエネルギーは「思考や分析」を表しますが、これは何があってから働くと言われていましたか？",
+        options: [
+          "感情（水）が先にあり、それを処理・説明するために思考（風）が働く",
+          "行動（土）が先にあり、それを反省するために思考（風）が働く",
+          "情熱（火）が先にあり、それを抑えるために思考（風）が働く",
+          "誰かからの指示があってから思考（風）が働く"
+        ],
+        correctIndex: 0,
+        explanation: "「もやっとした」などの感情（水）が先にあり、なぜそう感じたのかを説明・言語化するために思考（風）が働きます。そのため、感情よりもさらに情報が制限されます。"
+      },
+      {
+        question: "土（ペンタクル）のエネルギーが表すものは何だと言われていましたか？",
+        options: [
+          "未来の可能性",
+          "精神世界の探求",
+          "現実の世界や肉体を使った体験そのもの",
+          "他者とのコミュニケーション"
+        ],
+        correctIndex: 2,
+        explanation: "土（ペンタクル）は現実世界や肉体、形あるものを表します。火・水・風のエネルギーがすべて合わさって初めて、土（現実での体験・行動）になります。"
+      },
+      {
+        question: "タロットカードは全部で何枚ありますか？",
+        options: [
+          "56枚",
+          "64枚",
+          "78枚",
+          "82枚"
+        ],
+        correctIndex: 2,
+        explanation: "タロットは全部で78枚あります。大きく分けて大アルカナ（22枚）と小アルカナ（56枚）で構成されています。"
+      },
+      {
+        question: "小アルカナは生命の樹の図のどの部分に対応し、何と呼ばれていますか？",
+        options: [
+          "丸と丸を繋ぐ線に対応し、「パス」と呼ばれる",
+          "丸い部分に対応し、「セフィラ」と呼ばれる",
+          "外側の枠に対応し、「アインソフ」と呼ばれる",
+          "一番上の王冠に対応し、「ケテル」と呼ばれる"
+        ],
+        correctIndex: 1,
+        explanation: "小アルカナは生命の樹の「丸い部分」に対応し、「セフィラ」と呼ばれます。エネルギーが集まる場所や状態を表しています。"
+      },
+      {
+        question: "大アルカナは生命の樹の図のどの部分に対応していますか？",
+        options: [
+          "丸と丸を繋ぐ線（パス）に対応し、状態が移り変わる道やプロセスを表す",
+          "丸い部分（セフィラ）に対応し、エネルギーが留まる場所を表す",
+          "左側の柱に対応し、厳しさを表す",
+          "右側の柱に対応し、慈悲を表す"
+        ],
+        correctIndex: 0,
+        explanation: "大アルカナはセフィラ（丸）同士を繋ぐ「線（パス）」に対応しています。ある状態から別の状態へ移動する道や、変化のプロセスを表しています。"
+      },
+      {
+        question: "小アルカナに含まれるコートカード（人物カード）は、単なる人物像ではなく何を表していると言われていましたか？",
+        options: [
+          "相談者の前世の姿",
+          "未来に出会うキーパーソン",
+          "ヨーロッパの歴史上の王族",
+          "物事が現実化していく時の宇宙の法則"
+        ],
+        correctIndex: 3,
+        explanation: "コートカードはただの人物を表しているわけではなく、物事がどうやって現実化していくのかという「宇宙の法則」のようなものが込められていると語られています。"
+      }
+    ];
+
+    // --- メインアプリ ---
+    function App() {
+      const [currentStep, setCurrentStep] = useState('start'); // 'start', 'quiz', 'result'
+      const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+      const [score, setScore] = useState(0);
+      const [selectedOption, setSelectedOption] = useState(null);
+      const [isAnswered, setIsAnswered] = useState(false);
+
+      const handleStart = () => {
+        setCurrentStep('quiz');
+        setCurrentQuestionIndex(0);
+        setScore(0);
+        setSelectedOption(null);
+        setIsAnswered(false);
+      };
+
+      const handleOptionClick = (index) => {
+        if (isAnswered) return;
+        
+        setSelectedOption(index);
+        setIsAnswered(true);
+        
+        if (index === quizData[currentQuestionIndex].correctIndex) {
+          setScore(score + 1);
+        }
+      };
+
+      const handleNextQuestion = () => {
+        if (currentQuestionIndex < quizData.length - 1) {
+          setCurrentQuestionIndex(currentQuestionIndex + 1);
+          setSelectedOption(null);
+          setIsAnswered(false);
+        } else {
+          setCurrentStep('result');
+        }
+      };
+
+      return (
+        <div className="min-h-screen flex items-center justify-center p-4">
+          <div className="max-w-md w-full bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl overflow-hidden border border-white/50 relative">
+            
+            {/* --- Start Screen --- */}
+            {currentStep === 'start' && (
+              <div className="p-8 text-center flex flex-col items-center">
+                <div className="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mb-6 shadow-inner">
+                  <SparklesIcon className="w-10 h-10 text-indigo-600" />
+                </div>
+                <h1 className="text-2xl font-bold text-slate-800 mb-4">マスターコース復習クイズ</h1>
+                <p className="text-slate-600 mb-6 leading-relaxed">
+                  全25問のボリュームアップ版！<br/>
+                  音声で学んだ「生命の樹とタロット」の基礎知識を、ぽちぽちタップして楽しく復習しましょう！
+                </p>
+                <div className="bg-indigo-50 text-indigo-800 text-sm p-4 rounded-xl mb-8">
+                  わからない問題があっても大丈夫。<br/>解説を読んで知識をインストールしていきましょう。
+                </div>
+                <button 
+                  onClick={handleStart}
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 px-6 rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-indigo-200"
+                >
+                  <PlayIcon className="w-5 h-5" />
+                  クイズを始める (全25問)
+                </button>
+              </div>
+            )}
+
+            {/* --- Quiz Screen --- */}
+            {currentStep === 'quiz' && (
+              <div className="flex flex-col h-full max-h-[90vh]">
+                {/* Header & Progress */}
+                <div className="p-6 pb-2 border-b border-slate-100">
+                  <div className="flex justify-between items-center mb-4 text-sm font-medium text-slate-500">
+                    <span>Question {currentQuestionIndex + 1} of {quizData.length}</span>
+                    <span className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs">
+                      スコア: {score}
+                    </span>
+                  </div>
+                  <div className="w-full bg-slate-100 rounded-full h-2 mb-4">
+                    <div 
+                      className="bg-indigo-500 h-2 rounded-full transition-all duration-500"
+                      style={{ width: `${((currentQuestionIndex + 1) / quizData.length) * 100}%` }}
+                    ></div>
+                  </div>
+                  <h2 className="text-xl font-bold text-slate-800 leading-snug mt-4 mb-2">
+                    {quizData[currentQuestionIndex].question}
+                  </h2>
+                </div>
+
+                {/* Options */}
+                <div className="p-6 space-y-3 flex-grow overflow-y-auto">
+                  {quizData[currentQuestionIndex].options.map((option, index) => {
+                    const isCorrect = index === quizData[currentQuestionIndex].correctIndex;
+                    const isSelected = selectedOption === index;
+                    
+                    let buttonStyle = "bg-white border-2 border-slate-200 text-slate-700 hover:border-indigo-300 hover:bg-indigo-50";
+                    let IconComponent = null;
+
+                    if (isAnswered) {
+                      if (isCorrect) {
+                        buttonStyle = "bg-green-50 border-2 border-green-500 text-green-800 font-medium";
+                        IconComponent = <CheckCircleIcon className="w-5 h-5 text-green-500 flex-shrink-0" />;
+                      } else if (isSelected) {
+                        buttonStyle = "bg-red-50 border-2 border-red-400 text-red-800";
+                        IconComponent = <XCircleIcon className="w-5 h-5 text-red-500 flex-shrink-0" />;
+                      } else {
+                        buttonStyle = "bg-white border-2 border-slate-100 text-slate-400 opacity-60";
+                      }
+                    }
+
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => handleOptionClick(index)}
+                        disabled={isAnswered}
+                        className={`w-full text-left p-4 rounded-2xl transition-all duration-200 flex justify-between items-center gap-3 ${buttonStyle} ${!isAnswered && 'active:scale-[0.98]'}`}
+                      >
+                        <span className="leading-relaxed text-sm md:text-base">{option}</span>
+                        {IconComponent}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Explanation & Next Button */}
+                {isAnswered && (
+                  <div className="p-6 bg-slate-50 border-t border-slate-100">
+                    <div className={`p-4 rounded-xl mb-4 ${selectedOption === quizData[currentQuestionIndex].correctIndex ? 'bg-green-100 text-green-800' : 'bg-slate-200 text-slate-700'}`}>
+                      <p className="font-bold mb-1 flex items-center gap-2">
+                        {selectedOption === quizData[currentQuestionIndex].correctIndex ? (
+                          <><CheckCircleIcon className="w-5 h-5"/> 正解！</>
+                        ) : (
+                          <><XCircleIcon className="w-5 h-5"/> おしい！</>
+                        )}
+                      </p>
+                      <p className="text-sm leading-relaxed">{quizData[currentQuestionIndex].explanation}</p>
+                    </div>
+                    <button
+                      onClick={handleNextQuestion}
+                      className="w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-4 px-6 rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-2"
+                    >
+                      {currentQuestionIndex < quizData.length - 1 ? '次の問題へ' : '結果を見る'}
+                      <ChevronRightIcon className="w-5 h-5" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* --- Result Screen --- */}
+            {currentStep === 'result' && (
+              <div className="p-8 text-center flex flex-col items-center">
+                <div className="w-24 h-24 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-full flex items-center justify-center mb-6 shadow-lg text-white">
+                  <span className="text-3xl font-bold">{score}/{quizData.length}</span>
+                </div>
+                <h2 className="text-2xl font-bold text-slate-800 mb-2">お疲れ様でした！</h2>
+                <p className="text-slate-600 mb-8 leading-relaxed">
+                  {score === quizData.length 
+                    ? "全問正解！素晴らしい理解度です。この調子で学びを進めていきましょう！" 
+                    : score >= quizData.length * 0.7 
+                      ? "よくできました！間違えたところは「わからない」を楽しんで、また復習してみてくださいね。"
+                      : "挑戦ありがとうございます！音声で言われていた通り、わからなくて当然の時期です。何度も触れてインストールしていきましょう！"}
+                </p>
+                <button 
+                  onClick={handleStart}
+                  className="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold py-4 px-6 rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-2"
+                >
+                  <RotateCcwIcon className="w-5 h-5" />
+                  もう一度挑戦する
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
