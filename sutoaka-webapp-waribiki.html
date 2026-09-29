@@ -1,292 +1,392 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>タロット迷子解消チェック</title>
-    <!-- Tailwind CSS (CDN) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* アニメーションの定義 */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-            animation: fadeIn 0.5s ease-out forwards;
-        }
-        /* ステップの初期非表示 */
-        .step-container {
-            display: none;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>タロットクエスト ― リーディング戦闘力 測定 ―</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0B1226;--win:#05070F;--line:#FFFFFF;--gold:#F2CB7A;--gold2:#C79E5E;--blue:#8FB8FF;--red:#FF7A6B;--green:#8BE0A4;--dim:#9AA6C0}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:"DotGothic16","Hiragino Sans",monospace;color:#fff;font-size:17px;line-height:1.8;
+  min-height:100vh;background:var(--bg);
+  background-image:radial-gradient(#ffffff55 1px,transparent 1.5px),radial-gradient(#F2CB7A55 1px,transparent 1.5px);
+  background-size:90px 90px,140px 140px;background-position:0 0,40px 70px;
+  display:flex;justify-content:center;padding:18px 14px 50px;line-break:strict;
+}
+.app{width:100%;max-width:440px}
+.win{background:var(--win);border:3px solid var(--line);border-radius:10px;box-shadow:0 0 0 3px var(--win),0 0 0 5px var(--line);padding:16px 14px;margin:12px 3px 18px}
+.screen{display:none}
+.screen.on{display:block;animation:pop .35s steps(4) both}
+@keyframes pop{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+.logo{text-align:center;padding:26px 0 8px}
+.logo .en{color:var(--gold);letter-spacing:.2em;font-size:15px}
+.logo h1{font-size:34px;line-height:1.35;letter-spacing:.06em;color:#fff;text-shadow:3px 3px 0 #33547A;margin-top:6px}
+.logo p{color:var(--blue);margin-top:8px;font-size:16px}
+.sprite{font-size:64px;text-align:center;line-height:1.2;margin:8px 0}
+.sprite.shake{animation:shake .5s steps(6) 1}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+.float{animation:float 2.2s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-6px)}}
+.who{color:var(--gold);font-size:15px;margin-bottom:2px}
+.msg{min-height:3.6em;white-space:pre-wrap;word-break:auto-phrase}
+.cmd{display:grid;gap:4px;margin-top:4px}
+.cmd button{
+  font-family:inherit;font-size:17px;line-height:1.6;color:#fff;background:none;border:0;text-align:left;word-break:auto-phrase;
+  padding:9px 4px 9px 30px;position:relative;cursor:pointer;border-radius:6px;
+}
+.cmd button:before{content:"▶";position:absolute;left:6px;top:9px;color:#ffffff40}
+.cmd button:hover:before,.cmd button:focus:before,.cmd button.picked:before{color:var(--gold)}
+.cmd button.picked{color:var(--gold)}
+.cmd button:active{background:#ffffff18}
+.next{display:block;width:100%;font-family:inherit;font-size:18px;color:#fff;background:none;border:0;text-align:right;padding:6px 4px 0;cursor:pointer}
+.next span{display:inline-block;animation:blink 1s steps(2) infinite;color:var(--gold)}
+@keyframes blink{50%{opacity:0}}
+.hud{display:flex;justify-content:space-between;color:var(--dim);font-size:14px;padding:0 6px}
+.hud b{color:var(--gold);font-weight:400}
+.big{font-size:22px;color:var(--gold);text-align:center}
+.power{font-size:46px;text-align:center;color:#fff;text-shadow:3px 3px 0 #B4552D;letter-spacing:.06em;line-height:1.3}
+.power small{font-size:16px;color:var(--dim);text-shadow:none;display:block;letter-spacing:0}
+.row{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dashed #ffffff33;padding:5px 0}
+.row span:first-child{color:var(--blue);flex:none}
+.row span:last-child{text-align:right}
+.none{color:var(--red)}
+.bar{display:grid;grid-template-columns:6.2em 1fr 2.2em;gap:8px;align-items:center;margin:6px 0;font-size:16px}
+.bar i{display:block;height:14px;border:2px solid #fff;border-radius:3px;position:relative;overflow:hidden}
+.bar i:after{content:"";position:absolute;left:0;top:0;bottom:0;width:var(--w);background:var(--c,var(--green));transition:width 1s steps(10)}
+.bar em{font-style:normal;text-align:right;color:var(--gold)}
+.h{color:var(--gold);margin-bottom:6px}
+.quest{border-color:var(--gold);box-shadow:0 0 0 3px var(--win),0 0 0 5px var(--gold)}
+.quest .ttl{color:var(--gold);font-size:19px;text-align:center}
+.reward{margin-top:10px;background:#ffffff12;border-radius:8px;padding:10px 12px}
+.reward b{color:var(--gold);font-weight:400}
+.go{
+  display:block;text-align:center;text-decoration:none;font-family:inherit;font-size:19px;color:#1a1200;
+  background:linear-gradient(#FFE2A1,#E2B35B);border:3px solid #fff;border-radius:10px;padding:14px 10px;margin-top:14px;
+  box-shadow:0 5px 0 #8A6A2B;
+}
+.go:active{transform:translateY(3px);box-shadow:0 2px 0 #8A6A2B}
+.note{font-size:12.5px;color:var(--dim);line-height:1.6;margin-top:12px;font-family:"Hiragino Sans",sans-serif}
+.again{display:block;margin:4px auto 0;font-family:inherit;font-size:16px;color:var(--dim);background:none;border:0;cursor:pointer;padding:10px}
+.foot{text-align:center;color:#ffffff66;font-size:12px}
+.count{font-variant-numeric:tabular-nums}
+.snd{position:fixed;right:10px;top:10px;z-index:9;font-family:inherit;font-size:14px;color:#fff;background:#05070Fcc;border:2px solid #fff;border-radius:8px;padding:4px 10px;cursor:pointer}
+.cmd button.run{color:var(--blue)}
+.cmd button.gone{display:none}
+</style>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center p-4 font-sans text-gray-800">
-    
-    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden transition-all duration-500">
-        
-        <!-- Step 1: 悩み選択 -->
-        <div id="step1" class="step-container p-8 animate-fade-in" style="display: block;">
-            <h2 class="text-2xl font-bold text-center text-indigo-900 mb-6">
-                タロットでこんな<br>お悩みはありませんか？
-            </h2>
-            <p class="text-sm text-gray-500 text-center mb-6">当てはまるものをポチポチ選んでみてください（複数可）</p>
-            
-            <div id="issues-container" class="space-y-3 mb-8">
-                <!-- JSで動的にボタンが生成されます -->
-            </div>
+<body>
+<button class="snd" id="snd" onclick="toggleSound()" style="display:none">♪ ON</button>
+<div class="app">
 
-            <button id="btn-next-1" onclick="nextStep(2)" disabled
-                class="w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-all duration-300 bg-gray-200 text-gray-400 cursor-not-allowed">
-                結果を見る 
-                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-            </button>
-        </div>
+  <!-- タイトル -->
+  <section class="screen on" id="s-title">
+    <div class="logo">
+      <p class="en">TAROT QUEST</p>
+      <h1>タロット<br>クエスト</h1>
+      <p>― リーディング戦闘力 測定 ―</p>
+    </div>
+    <div class="sprite float">🃏</div>
+    <div class="win">
+      <div class="cmd">
+        <button onclick="begin(true)">ぼうけんを はじめる（♪音あり）</button>
+        <button onclick="begin(false)">音なしで はじめる</button>
+      </div>
+    </div>
+    <p class="foot">7つの できごとに こたえるだけ・1分くらい</p>
+  </section>
 
-        <!-- Step 2: 原因と解決策の提示（パラダイムシフト） -->
-        <div id="step2" class="step-container p-8">
-            <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 text-indigo-600 mb-6">
-                    <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
-                </div>
-                
-                <div class="bg-indigo-50 rounded-xl p-5 mb-6 border border-indigo-100">
-                    <h2 id="dynamic-title" class="text-xl font-bold text-indigo-900 mb-3"></h2>
-                    <p id="dynamic-desc" class="text-gray-700 text-sm leading-relaxed text-left"></p>
-                </div>
+  <!-- ギルド受付 -->
+  <section class="screen" id="s-intro">
+    <div class="sprite float">🧝‍♀️</div>
+    <div class="win">
+      <p class="who">ギルドの うけつけ</p>
+      <p class="msg" id="intro-msg"></p>
+      <button class="next" onclick="introNext()">つぎへ <span>▼</span></button>
+    </div>
+  </section>
 
-                <p class="text-gray-600 leading-relaxed font-bold">
-                    これらのモヤモヤを根本から解決する<br>
-                    共通の答えが、たった一つあります。<br><br>
-                    それは、タロットの<br>
-                    <strong class="text-indigo-600 text-xl border-b-2 border-indigo-200 pb-1">「設計図」を手に入れること</strong>です。
-                </p>
-            </div>
+  <!-- できごと -->
+  <section class="screen" id="s-q">
+    <div class="hud"><span>できごと <b id="qn"></b> / 7</span><span>けいそく中 <b id="dots"></b></span></div>
+    <div class="sprite" id="q-sprite"></div>
+    <div class="win">
+      <p class="msg" id="q-msg"></p>
+    </div>
+    <div class="win">
+      <div class="cmd" id="q-cmd"></div>
+    </div>
+  </section>
 
-            <button onclick="nextStep(3)"
-                class="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold text-lg flex items-center justify-center gap-2 hover:bg-indigo-700 transition-all duration-300 shadow-lg">
-                設計図とは？ 
-                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-            </button>
-        </div>
+  <!-- 測定 -->
+  <section class="screen" id="s-load">
+    <div class="sprite float">🔮</div>
+    <div class="win">
+      <p class="who">ギルドの うけつけ</p>
+      <p class="msg">水晶に 手を かざしてください…
 
-        <!-- Step 3: 比喩（建築士 vs 素人） -->
-        <div id="step3" class="step-container p-8">
-            <h2 class="text-xl font-bold text-center text-indigo-900 mb-8">
-                家づくりに例えてみましょう
-            </h2>
-            
-            <div class="space-y-6 mb-8">
-                <!-- 悪い例 -->
-                <div class="bg-red-50 p-5 rounded-xl border border-red-100">
-                    <div class="flex items-center gap-3 mb-3 text-red-700 font-bold">
-                        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                        <h3>設計図がない素人の家</h3>
-                    </div>
-                    <p class="text-sm text-red-800 leading-relaxed">
-                        「勘」と「見よう見まね」で建てるため、動線が悪く、少しの風で揺れてしまう。常に不安がつきまといます。<br>
-                        <span class="text-xs text-red-600 mt-2 block">＝ 丸暗記や、曖昧な直感に頼ったリーディング</span>
-                    </p>
-                </div>
+戦闘力を はかっています…</p>
+      <p class="power count" id="roll">0</p>
+    </div>
+  </section>
 
-                <!-- 矢印 -->
-                <div class="flex justify-center">
-                    <svg class="w-6 h-6 text-gray-300 transform rotate-90" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                </div>
-
-                <!-- 良い例 -->
-                <div class="bg-indigo-50 p-5 rounded-xl border border-indigo-100 shadow-sm">
-                    <div class="flex items-center gap-3 mb-3 text-indigo-700 font-bold">
-                        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg>
-                        <h3>一級建築士の家</h3>
-                    </div>
-                    <p class="text-sm text-indigo-900 leading-relaxed">
-                        確固たる<strong class="bg-indigo-200 px-1">「設計図」</strong>があるため、迷いなく機能的で美しい家が建ちます。住む人も安心です。<br>
-                        <span class="text-xs text-indigo-700 mt-2 block">＝ 構造を理解し、どんな相談にも対応できるリーディング</span>
-                    </p>
-                </div>
-            </div>
-
-            <button onclick="nextStep(4)"
-                class="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold text-lg flex items-center justify-center gap-2 hover:bg-indigo-700 transition-all duration-300 shadow-lg">
-                次へ 
-                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-            </button>
-        </div>
-
-        <!-- Step 4: CTA（クロージング） -->
-        <div id="step4" class="step-container p-8 text-center">
-            <div class="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                <svg class="w-10 h-10 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
-            </div>
-            
-            <h2 class="text-2xl font-bold text-indigo-900 mb-4">
-                モヤモヤを「ワクワク」へ
-            </h2>
-            
-            <p class="text-gray-600 mb-6 leading-relaxed text-sm">
-                タロットの「設計図」を手に入れれば、暗記の苦痛や、頭が真っ白になる不安から解放されます。<br><br>
-                一生モノのスキルとして、自信を持ってカードを展開できるようになりませんか？
-            </p>
-
-            <!-- 特典エリア -->
-            <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 mb-6 border border-orange-200 relative overflow-hidden shadow-sm">
-                <div class="absolute top-0 right-0 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
-                    特別オファー🎁
-                </div>
-                <h3 class="font-bold text-orange-900 mb-4 mt-1 text-base">
-                    ここまで見てくれたあなたへ<br>特別なプレゼント
-                </h3>
-                <ul class="text-sm text-orange-900 text-left space-y-3 font-medium">
-                    <li class="flex items-start gap-2">
-                        <svg class="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
-                        <span>全講座 <strong class="text-red-600 text-lg">300円OFF</strong> 優待！</span>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- アフィリエイト/優待リンク -->
-            <a href="https://www.street-academy.com/steachers/675087?conversion_name=direct_message&d_code=v1lGweXG&tracking_code=249a155f5391effef065989413d1517e" 
-               target="_blank" 
-               rel="noopener noreferrer"
-               class="w-full py-4 bg-gradient-to-r from-pink-500 to-orange-400 text-white rounded-xl font-bold text-lg flex items-center justify-center gap-2 hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl mb-4">
-                300円OFFで講座を見に行く
-            </a>
-
-            <p class="text-[10px] text-gray-400 text-left leading-tight">
-                ※こちらの優待割引は講座のみ対象となります。時間制相談・カスタマイズレッスン・月額サービスは対象外となりますのでご注意ください。
-            </p>
-        </div>
+  <!-- 結果 -->
+  <section class="screen" id="s-result">
+    <div class="sprite float" id="r-sprite"></div>
+    <div class="win">
+      <p class="big">ぼうけんのしょ</p>
+      <div class="row"><span>ジョブ</span><span id="r-job"></span></div>
+      <div class="row"><span>レベル</span><span id="r-lv"></span></div>
+      <div class="row"><span>にげた かいすう</span><span id="r-run"></span></div>
+      <p class="power count" id="r-power"></p>
     </div>
 
-    <!-- アプリのJavaScriptロジック -->
-    <script>
-        // 悩みのリストとタイプ
-        const issuesList = [
-            { text: "タロットがそもそも苦手・難しい", type: "A" },
-            { text: "カードのキーワードが覚えられない", type: "A" },
-            { text: "キーワードは覚えたが、相談内容と結びつかない", type: "B" },
-            { text: "いざリーディングになると頭が真っ白になる", type: "B" },
-            { text: "「直感」や「イメージ」と言われてもモヤモヤする", type: "C" }
-        ];
+    <div class="win">
+      <p class="h">つよさ</p>
+      <div id="r-bars"></div>
+    </div>
 
-        // タイプ別のメッセージ
-        const typeMessages = {
-            A: {
-                title: "「暗記地獄」に陥っていませんか？",
-                desc: "タロットを「辞書」のように丸暗記しようとすると、必ず限界が来ます。暗記力がないのではなく、覚え方が間違っているだけなのです。"
-            },
-            B: {
-                title: "「パズル組み立てパニック」状態ですね",
-                desc: "カードの意味（ピース）は知っているのに、いざ目の前の相談という「枠」に当てはめようとすると、どう繋げていいか分からなくなっていませんか？"
-            },
-            C: {
-                title: "「スピリチュアル迷子」になっていませんか？",
-                desc: "「特別な霊感や才能がないとダメなのかも…」と落ち込む必要は全くありません。実は、確かな『直感』はロジックの上に咲く花なのです。"
-            }
-        };
+    <div class="win">
+      <p class="h">そうび</p>
+      <div class="row"><span>ぶき</span><span id="r-w"></span></div>
+      <div class="row"><span>たて</span><span id="r-s"></span></div>
+      <div class="row"><span>ちず</span><span class="none">もっていない！</span></div>
+    </div>
 
-        let selectedIssues = [];
+    <div class="win">
+      <p class="who">ギルドの うけつけ</p>
+      <p class="msg" id="r-msg"></p>
+    </div>
 
-        // 初期化：Step1のボタンを生成
-        function init() {
-            const container = document.getElementById('issues-container');
-            issuesList.forEach((issue) => {
-                const btn = document.createElement('button');
-                btn.className = 'w-full text-left p-4 rounded-xl border-2 transition-all duration-200 flex items-center gap-3 border-gray-100 bg-gray-50 text-gray-600 hover:bg-gray-100';
-                btn.onclick = () => toggleIssue(btn, issue.text, issue.type);
-                
-                btn.innerHTML = `
-                    <div class="check-container flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center border-gray-300">
-                        <svg class="check-icon hidden w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
-                    </div>
-                    <span class="text-sm font-medium">${issue.text}</span>
-                `;
-                container.appendChild(btn);
-            });
-        }
+    <div class="win quest">
+      <p class="ttl">！クエスト はっせい！</p>
+      <p style="text-align:center;margin-top:4px">でんせつの地図<br>「生命の樹」を 手に入れろ</p>
+      <div class="reward">
+        <p>おすすめの ぼうけん</p>
+        <p><b id="r-course"></b></p>
+        <p id="r-course-desc" style="font-size:15.5px"></p>
+      </div>
+      <div class="reward">
+        <p>ギルドの わりびきけん</p>
+        <p><b>全講座 300円OFF</b> を 手に入れた！</p>
+      </div>
+      <a class="go" target="_blank" rel="noopener noreferrer"
+         href="https://www.street-academy.com/steachers/675087?conversion_name=direct_message&d_code=v1lGweXG&tracking_code=249a155f5391effef065989413d1517e">▶ 300円OFFで 講座を見に行く</a>
+      <p class="note">※優待は講座のみが対象です。時間制相談・カスタマイズレッスン・月額サービスは対象外となりますのでご注意ください。<br>※このボタンから進んだ場合のみ優待が適用されます。</p>
+    </div>
 
-        // 選択時のトグル処理
-        function toggleIssue(element, text, type) {
-            const idx = selectedIssues.findIndex(i => i.text === text);
-            const checkContainer = element.querySelector('.check-container');
-            const checkIcon = element.querySelector('.check-icon');
+    <button class="again" onclick="restart()">▶ もういちど はかる</button>
+    <p class="foot">生命の樹とタロット　すずき まゆみ</p>
+  </section>
+</div>
 
-            if (idx > -1) {
-                // 解除
-                selectedIssues.splice(idx, 1);
-                element.classList.remove('border-indigo-500', 'bg-indigo-50', 'text-indigo-900', 'shadow-sm');
-                element.classList.add('border-gray-100', 'bg-gray-50', 'text-gray-600', 'hover:bg-gray-100');
-                checkContainer.classList.remove('border-indigo-500', 'bg-indigo-500');
-                checkContainer.classList.add('border-gray-300');
-                checkIcon.classList.add('hidden');
-            } else {
-                // 選択
-                selectedIssues.push({ text, type });
-                element.classList.add('border-indigo-500', 'bg-indigo-50', 'text-indigo-900', 'shadow-sm');
-                element.classList.remove('border-gray-100', 'bg-gray-50', 'text-gray-600', 'hover:bg-gray-100');
-                checkContainer.classList.add('border-indigo-500', 'bg-indigo-500');
-                checkContainer.classList.remove('border-gray-300');
-                checkIcon.classList.remove('hidden');
-            }
+<script>
+const INTRO = [
+  "ようこそ！\nここは 冒険者ギルド シリウス支部です。",
+  "タロット使いの とうろく ですね。\nまずは あなたの「リーディング戦闘力」を はからせてください。",
+  "これから 7つの できごとが おこります。\nいつもの あなたなら どうするか、えらんでくださいね。\n正解は ありません！"
+];
 
-            // 次へボタンの活性/非活性
-            const nextBtn = document.getElementById('btn-next-1');
-            if (selectedIssues.length > 0) {
-                nextBtn.disabled = false;
-                nextBtn.classList.remove('bg-gray-200', 'text-gray-400', 'cursor-not-allowed');
-                nextBtn.classList.add('bg-indigo-600', 'text-white', 'hover:bg-indigo-700', 'shadow-lg', 'hover:shadow-xl');
-            } else {
-                nextBtn.disabled = true;
-                nextBtn.classList.add('bg-gray-200', 'text-gray-400', 'cursor-not-allowed');
-                nextBtn.classList.remove('bg-indigo-600', 'text-white', 'hover:bg-indigo-700', 'shadow-lg', 'hover:shadow-xl');
-            }
-        }
+// E=辞書 / V=キーワード / G=感覚 / A=自分の言葉
+const Q = [
+  { s:"🃏", m:"カードが 1まい あらわれた！", o:[
+    ["しらべる（本やネットで意味を調べる）","E","辞書を ひらいた！"],
+    ["おもいだす（覚えたキーワード）","V","キーワードの呪文を となえた！"],
+    ["かんじる（絵を見て言葉にする）","G","カードを じっと 見つめた！"],
+    ["ながれをよむ（カードの背景を考える）","A","カードの むこうがわを 見た！"],
+    ["にげる","run","しかし カードは ついてくる！"]]},
+  { s:"💭", m:"リーディングが おわった！\nあなたの こころのこえは？", o:[
+    ["「これで合ってるのかな…」","E","こころが ざわざわ している！"],
+    ["「意味は言えたけど、話が広がらなかった」","V","MPが たりない！"],
+    ["「感じたのに、自信を持って言えなかった」","G","ことばが のどで とまった！"],
+    ["「もっと深いところまで行きたかった」","A","まだ さきへ 進めそうだ！"]]},
+  { s:"⚔️💧", m:"ソードの3 と カップの5 が あらわれた！\nどちらも「悲しみ」と なのっている。\n\n相談者「この2まい、なにが ちがうの？」", o:[
+    ["「どちらも悲しみです」と答える","E","相談者は くびを かしげている！"],
+    ["違うとは思うけど、言葉にできない","V","じかんが ながれた…"],
+    ["なんとなくの感覚で説明する","G","ふんわり つたわった！"],
+    ["理由をつけて説明する","A","相談者は うなずいている！"],
+    ["にげる","run","しかし まわりこまれて しまった！\n相談者は じっと こちらを 見ている。"]]},
+  { s:"🧙", m:"師匠が あらわれた！\n\n師匠「直感で リーディング するのじゃ」", o:[
+    ["なにも浮かばず かたまる","E","からだが うごかない！"],
+    ["浮かぶけど キーワードとつながらない","V","呪文と イメージが ばらばらだ！"],
+    ["浮かぶけど 根拠がなくて不安","G","イメージは わいている！"],
+    ["浮かんだことに 理由をそえて話す","A","師匠は にやりと わらった！"],
+    ["にげる","run","師匠「にげても カードは へらんぞ」"]]},
+  { s:"🃏🃏🃏", m:"数札（エース〜10）の むれが あらわれた！\n40まい いる！", o:[
+    ["にげる（ほとんど手つかず）","E","うまく にげきれた！"],
+    ["覚えたはずが すぐ忘れる","V","わすれの呪いに かかっている！"],
+    ["スートのイメージで なんとなく読む","G","いきおいで のりきった！"],
+    ["数字とスートの組み合わせで考える","A","むれを きれいに ならべた！"]]},
+  { s:"📚", m:"しゅぎょうの じかんだ。\nなにを する？", o:[
+    ["本やサイトを見比べて 正解をさがす","E","じょうほうの うみで およいでいる！"],
+    ["キーワードをノートにまとめる","V","ノートが 1さつ ふえた！"],
+    ["毎日1枚引いて 感じたことを書く","G","まいにち つづけている！"],
+    ["だれかをリーディングして 経験をつむ","A","けいけんちを かくとく！"],
+    ["にげる（きょうは おやすみ）","run","おちゃを のんで ひとやすみ した。\n…さて、しゅぎょうの じかんだ。"]]},
+  { s:"🌟", m:"星よみの 旅人が はなしかけてきた。\n\n旅人「西洋占星術は すきかい？」", o:[
+    ["すき！勉強している","astro","旅人と いきとうごう した！"],
+    ["自分の星座くらいは知っている","none","旅人は にっこり わらった！"],
+    ["ほとんど知らない","none","旅人は 手を ふって さっていった！"]]}
+];
 
-        // 診断タイプの判定
-        function analyzeType() {
-            let counts = { A: 0, B: 0, C: 0 };
-            selectedIssues.forEach(item => counts[item.type]++);
-            
-            let maxType = 'A';
-            let maxCount = -1;
-            for (const [type, count] of Object.entries(counts)) {
-                if (count > maxCount) {
-                    maxCount = count;
-                    maxType = type;
-                }
-            }
-            return maxType;
-        }
+const JOBS = {
+  E:{ job:"辞書かつぎの たびびと", sprite:"📖", base:120, w:"ぶあつい辞書", s:"ネットけんさく",
+      msg:"おもたい辞書を かついで、ここまで よく 歩いてきましたね。\n正解を さがす まじめさは、あなたの つよさです。\n\nただ… 地図を もっていません！\n\n本によって 書いてあることが ちがって まようのは、あなたのせいでは ありません。地図が あれば、どの意味が どこから 来たのかが 見えてきます。" },
+  V:{ job:"キーワードの せんし", sprite:"🗡️", base:380, w:"キーワードのノート", s:"あんきカード",
+      msg:"キーワードの呪文を たくさん おぼえていますね。その努力は ほんものです。\n\nただ… 地図を もっていません！\n\nいざ リーディングすると 呪文が つながらないのは、おぼえ方が たりないからでは ありません。地図が あれば、呪文と呪文を つなぐ道が 見えてきます。" },
+  G:{ job:"かんかくの ぎんゆうしじん", sprite:"🎻", base:530, w:"するどい感覚", s:"まいにちの 1まい引き",
+      msg:"カードから 感じとる力を、もう もっていますね。それは りっぱな才能です。\n\nただ… 地図を もっていません！\n\n「なぜ？」と きかれて ことばに つまるのは、感覚が たりないからでは ありません。地図が あれば、その感覚に「だから こうなんです」と 理由を そえられます。" },
+  A:{ job:"かたりの まほうつかい", sprite:"🧙‍♀️", base:880, w:"じぶんのことば", s:"これまでの けいけん",
+      msg:"じぶんのことばで リーディングできる、たのもしい 冒険者ですね。\n\nただ… 地図を もっていません！\n\nここまで 地図なしで 来たのは すごいことです。地図を 手にすると、1まいのカードから うけとれる情報が ぐんと ふえます。できている人ほど、のびしろが 大きいんです。" }
+};
 
-        // 画面切り替え処理
-        function nextStep(step) {
-            window.scrollTo(0, 0);
+const COURSES = {
+  main:{ t:"タロット 占い 1枚から10倍読む！", d:"1まいのカードから、どうやって話を広げていくのか。地図を使ったリーディングを体験する 90分です。" },
+  astro:{ t:"西洋 占星術 ホロスコープ からのタロット習得法", d:"星の知識を、そのままタロットにつなげていく 90分です。星がすきな あなたには、こちらが 近道です。" }
+};
 
-            // Step2へ進む時、診断結果をテキストに流し込む
-            if (step === 2) {
-                const userType = analyzeType();
-                document.getElementById('dynamic-title').innerText = typeMessages[userType].title;
-                document.getElementById('dynamic-desc').innerText = typeMessages[userType].desc;
-            }
+let i = 0, ans = [], ip = 0, typing = null, runs = 0;
 
-            // 全ステップを非表示にしてアニメーションクラスをリセット
-            document.querySelectorAll('.step-container').forEach(el => {
-                el.style.display = 'none';
-                el.classList.remove('animate-fade-in');
-            });
+// ---- 音（その場で鳴らす電子音。音声ファイルは使っていません）
+let AC = null, soundOn = false;
+function note(f, d, when = 0, type = 'square', vol = 0.06){
+  if(!soundOn || !AC) return;
+  const t0 = AC.currentTime + when, o = AC.createOscillator(), g = AC.createGain();
+  o.type = type; o.frequency.setValueAtTime(f, t0);
+  g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + d);
+  o.connect(g).connect(AC.destination); o.start(t0); o.stop(t0 + d + 0.02);
+}
+const SE = {
+  blip(){ note(1040, .03, 0, 'square', .025); },
+  select(){ note(660, .07); note(990, .1, .07); },
+  appear(){ [330,262,330,262,392].forEach((f,k) => note(f, .07, k*.07, 'sawtooth', .05)); },
+  run(){ [523,440,349,294].forEach((f,k) => note(f, .06, k*.05)); },
+  blocked(){ note(110, .25, .25, 'sawtooth', .07); note(98, .3, .45, 'sawtooth', .07); },
+  tick(){ note(500 + Math.random()*900, .04, 0, 'square', .04); },
+  fanfare(){ [[523,.12],[659,.12],[784,.12],[1047,.2],[784,.12],[1047,.5]].reduce((w,[f,d]) => { note(f, d + .05, w, 'square', .07); note(f/2, d + .05, w, 'triangle', .07); return w + d; }, 0); },
+  quest(){ [[784,.1],[784,.1],[988,.1],[1175,.35]].reduce((w,[f,d]) => { note(f, d + .05, w); return w + d; }, 0); }
+};
+function begin(withSound){
+  soundOn = withSound;
+  if(withSound){ try{ AC = AC || new (window.AudioContext || window.webkitAudioContext)(); AC.resume(); }catch(e){ soundOn = false; } }
+  $('snd').style.display = 'block'; $('snd').textContent = soundOn ? '♪ ON' : '♪ OFF';
+  SE.select(); intro();
+}
+function toggleSound(){
+  soundOn = !soundOn;
+  if(soundOn){ try{ AC = AC || new (window.AudioContext || window.webkitAudioContext)(); AC.resume(); }catch(e){ soundOn = false; } }
+  $('snd').textContent = soundOn ? '♪ ON' : '♪ OFF';
+  SE.select();
+}
+const $ = id => document.getElementById(id);
 
-            // 対象のステップを表示し、アニメーションを付与
-            const target = document.getElementById(`step${step}`);
-            target.style.display = 'block';
-            
-            // reflowを強制してアニメーションを再発火
-            void target.offsetWidth;
-            target.classList.add('animate-fade-in');
-        }
+function show(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
+  $(id).classList.add('on'); window.scrollTo(0,0);
+}
+function type(el, text, done){
+  clearInterval(typing); el.textContent = ''; let n = 0;
+  typing = setInterval(() => {
+    el.textContent = text.slice(0, ++n);
+    if(n % 3 === 0) SE.blip();
+    if(n >= text.length){ clearInterval(typing); typing = null; done && done(); }
+  }, 28);
+  el.onclick = () => { if(typing){ clearInterval(typing); typing = null; el.textContent = text; done && done(); } };
+}
+function intro(){ ip = 0; show('s-intro'); type($('intro-msg'), INTRO[0]); }
+function introNext(){
+  if(typing){ $('intro-msg').onclick(); return; }
+  SE.select(); ip++;
+  if(ip < INTRO.length) type($('intro-msg'), INTRO[ip]);
+  else { i = 0; ans = []; runs = 0; renderQ(); }
+}
+function restart(){ i = 0; ans = []; runs = 0; SE.select(); renderQ(); }
 
-        // スクリプト実行
-        init();
-    </script>
+function renderQ(){
+  const q = Q[i];
+  show('s-q');
+  $('qn').textContent = i + 1;
+  $('dots').textContent = '■'.repeat(i) + '□'.repeat(Q.length - i);
+  const sp = $('q-sprite'); sp.textContent = q.s; sp.className = 'sprite'; void sp.offsetWidth; sp.className = 'sprite shake';
+  const box = $('q-cmd'); box.innerHTML = '';
+  type($('q-msg'), q.m); SE.appear();
+  q.o.forEach(([t, v, react]) => {
+    const b = document.createElement('button');
+    b.textContent = t; if(v === 'run') b.className = 'run';
+    b.onclick = () => pick(b, v, react);
+    box.appendChild(b);
+  });
+}
+function pick(b, v, react){
+  if(b.parentNode.dataset.lock) return;
+  if(v === 'run'){
+    runs++; b.parentNode.dataset.lock = 1; SE.run(); SE.blocked();
+    type($('q-msg'), react, () => setTimeout(() => {
+      delete b.parentNode.dataset.lock; b.classList.add('gone');
+      type($('q-msg'), Q[i].m);
+    }, 1300));
+    return;
+  }
+  b.parentNode.dataset.lock = 1; b.classList.add('picked'); SE.select();
+  ans.push(v); if(/^にげる/.test(b.textContent)) runs++;
+  type($('q-msg'), react, () => setTimeout(() => {
+    delete b.parentNode.dataset.lock;
+    if(i < Q.length - 1){ i++; renderQ(); } else measure();
+  }, 750));
+}
+
+function calc(){
+  const c = {E:0,V:0,G:0,A:0};
+  ans.forEach(a => { if(a in c) c[a]++; });
+  let key = 'E', max = -1;
+  ['E','V','G','A'].forEach(k => { if(c[k] > max){ max = c[k]; key = k; } });
+  const power = JOBS[key].base + c.V*7 + c.G*11 + c.A*13 + c.E*3;
+  return {c, key, power};
+}
+function measure(){
+  show('s-load');
+  const {power} = calc();
+  const el = $('roll'); let t = 0;
+  const timer = setInterval(() => {
+    t++; el.textContent = Math.floor(Math.random()*9000 + 100); SE.tick();
+    if(t > 24){ clearInterval(timer); el.textContent = power; SE.fanfare(); setTimeout(result, 1500); }
+  }, 70);
+}
+function result(){
+  const {c, key, power} = calc();
+  const j = JOBS[key];
+  $('r-sprite').textContent = j.sprite;
+  $('r-job').textContent = j.job;
+  $('r-lv').textContent = 'Lv. ' + Math.max(1, Math.round(power / 40));
+  $('r-power').innerHTML = `<small>リーディング戦闘力</small>${power}`;
+  $('r-run').textContent = runs + ' かい';
+  $('r-w').textContent = j.w;
+  $('r-s').textContent = j.s;
+  const st = [
+    ["まじめさ", 35 + c.E*10 + c.V*6, '#8FB8FF'],
+    ["あんき力", 25 + c.V*11 + c.E*4, '#8BE0A4'],
+    ["かんじる力", 25 + c.G*11 + c.A*4, '#FFB3D1'],
+    ["かたる力", 20 + c.A*12 + c.G*3, '#F2CB7A'],
+    ["こんきょ", 8 + c.A*4, '#FF7A6B']
+  ];
+  $('r-bars').innerHTML = st.map(([n,v,col]) => {
+    v = Math.min(99, v);
+    return `<div class="bar"><span>${n}</span><i style="--w:0%;--c:${col}" data-w="${v}"></i><em>${v}</em></div>`;
+  }).join('');
+  const course = ans.includes('astro') ? COURSES.astro : COURSES.main;
+  $('r-course').textContent = course.t;
+  $('r-course-desc').textContent = course.d;
+  show('s-result');
+  setTimeout(() => document.querySelectorAll('.bar i').forEach(b => b.style.setProperty('--w', b.dataset.w + '%')), 300);
+  const tsukkomi = runs >= 3 ? `\n\n…ところで、${runs}かいも にげようと しましたね？\nだいじょうぶ。地図が あれば、にげなくて すみます。`
+                 : runs >= 1 ? `\n\n…ところで、${runs}かい にげようと しましたね？\n見ていましたよ。`
+                 : '';
+  type($('r-msg'), j.msg + tsukkomi, () => SE.quest());
+}
+</script>
 </body>
 </html>
