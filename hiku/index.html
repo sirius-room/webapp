@@ -170,6 +170,11 @@ footer{text-align:center;color:var(--ink-soft);font-size:13px;margin-top:26px;fo
     show(idx, false);
   }
 
+  // 確認用: ?reset を付けて開くと記憶を消して最初から(一般の人には案内しない)
+  if(/[?&]reset\b/.test(location.search)){
+    try{ localStorage.removeItem(KEY); }catch(e){}
+    history.replaceState(null, "", location.pathname);
+  }
   var saved = load();
   if(saved !== null){
     // すでに引いた人: 同じカードをそのまま見せる
