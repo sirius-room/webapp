@@ -30,15 +30,16 @@ h1{font-family:var(--display);font-weight:700;font-size:27px;letter-spacing:.08e
 .lead small{display:block;color:var(--ink-soft);font-size:13.5px;margin-top:4px}
 .panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 14px;box-shadow:0 6px 24px #463f5e12;margin-top:14px}
 
-/* 裏向きの22枚 */
-.deck{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
-@media (min-width:420px){.deck{grid-template-columns:repeat(6,1fr);gap:10px}}
-.deck button{appearance:none;border:0;padding:0;background:none;cursor:pointer;border-radius:8px;
-  aspect-ratio:2/3;overflow:hidden;box-shadow:0 2px 6px #463f5e22;transition:transform .18s,box-shadow .18s;transform:translateY(0)}
+/* 扇形のデッキ(裏向き5枚) */
+.deck{position:relative;height:240px;margin:6px auto 0;max-width:420px}
+.deck button{appearance:none;border:0;padding:0;background:none;cursor:pointer;position:absolute;left:50%;bottom:18px;
+  width:112px;aspect-ratio:2/3;border-radius:10px;overflow:hidden;box-shadow:0 6px 16px #463f5e33;
+  transform-origin:50% 120%;transform:translateX(-50%) rotate(var(--r)) translateY(var(--y));transition:transform .18s}
 .deck button img{display:block;width:100%;height:100%;object-fit:cover}
-.deck button:hover,.deck button:focus-visible{transform:translateY(-4px);box-shadow:0 8px 16px #463f5e33;outline:none}
-.deck.locked button{pointer-events:none;opacity:.55}
-.deck.locked button.chosen{opacity:1;transform:translateY(-6px) scale(1.08);box-shadow:0 10px 20px #b98f4566}
+.deck button:hover,.deck button:focus-visible{transform:translateX(-50%) rotate(var(--r)) translateY(calc(var(--y) - 10px));outline:none}
+.deck.locked button{pointer-events:none;opacity:.5}
+.deck.locked button.chosen{opacity:1;transform:translateX(-50%) rotate(var(--r)) translateY(calc(var(--y) - 16px));box-shadow:0 12px 24px #b98f4588}
+@media (min-width:420px){.deck{height:270px}.deck button{width:124px}}
 .hint{text-align:center;color:var(--ink-soft);font-size:13.5px;margin:12px 0 0}
 
 /* 結果 */
@@ -73,11 +74,11 @@ footer{text-align:center;color:var(--ink-soft);font-size:13px;margin-top:26px;fo
   <header>
     <p class="eyebrow">「受けたい」登録の方だけ</p>
     <h1>1枚引いて<br>割引券をもらう</h1>
-    <p class="lead" id="lead">22枚から、氣になる1枚をタップ。<small>出たカードで割引の金額が決まります。どれが出ても割引はつきます。</small></p>
+    <p class="lead" id="lead">デッキから、氣になる1枚をタップ。<small>出たカードで割引の金額が決まります。どれが出ても割引はつきます。</small></p>
   </header>
 
   <section class="panel" id="deckPanel">
-    <div class="deck" id="deck" aria-label="裏向きのカード22枚"></div>
+    <div class="deck" id="deck" aria-label="裏向きのカードのデッキ"></div>
     <p class="hint" id="hint">引けるのは1回だけです。深呼吸をひとつしてから、どうぞ。</p>
   </section>
 
@@ -132,14 +133,14 @@ footer{text-align:center;color:var(--ink-soft);font-size:13px;margin-top:26px;fo
   function load(){ try{ var v = localStorage.getItem(KEY); if(v===null) return null; var n = parseInt(v,10); return (n>=0 && n<22) ? n : null; }catch(e){ return null; } }
   function save(n){ try{ localStorage.setItem(KEY, String(n)); }catch(e){} }
 
-  // 裏向き22枚。どのボタンがどの札かは開くたびにシャッフル
-  var order = []; for(var i=0;i<22;i++) order.push(i);
-  for(var j=order.length-1;j>0;j--){ var k=Math.floor(Math.random()*(j+1)); var t=order[j]; order[j]=order[k]; order[k]=t; }
-  order.forEach(function(cardIdx, pos){
+  // 扇形に5枚。どれを選んでも22枚から1枚がランダムに出る(裏向きなので同じこと)
+  var FAN = [[-22,"22px"],[-11,"6px"],[0,"0px"],[11,"6px"],[22,"22px"]];
+  FAN.forEach(function(f, pos){
     var b = document.createElement("button");
     b.type = "button"; b.setAttribute("aria-label","裏向きのカード "+(pos+1)+"枚目");
+    b.style.setProperty("--r", f[0]+"deg"); b.style.setProperty("--y", f[1]); b.style.zIndex = pos+1;
     b.innerHTML = '<img src="cards/back.jpg" alt="">';
-    b.addEventListener("click", function(){ pick(cardIdx, b); });
+    b.addEventListener("click", function(){ pick(Math.floor(Math.random()*22), b); });
     deck.appendChild(b);
   });
 
