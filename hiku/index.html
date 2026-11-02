@@ -31,15 +31,15 @@ h1{font-family:var(--display);font-weight:700;font-size:27px;letter-spacing:.08e
 .panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 14px;box-shadow:0 6px 24px #463f5e12;margin-top:14px}
 
 /* 扇形のデッキ(裏向き5枚) */
-.deck{position:relative;height:240px;margin:6px auto 0;max-width:420px}
-.deck button{appearance:none;border:0;padding:0;background:none;cursor:pointer;position:absolute;left:50%;bottom:18px;
-  width:112px;aspect-ratio:2/3;border-radius:10px;overflow:hidden;box-shadow:0 6px 16px #463f5e33;
-  transform-origin:50% 120%;transform:translateX(-50%) rotate(var(--r)) translateY(var(--y));transition:transform .18s}
+.deck{display:flex;justify-content:center;align-items:flex-end;height:250px;padding:30px 0 6px;overflow:visible}
+.deck button{appearance:none;border:0;padding:0;background:none;cursor:pointer;flex:0 0 auto;
+  width:104px;aspect-ratio:2/3;margin:0 -24px;border-radius:10px;overflow:hidden;box-shadow:0 6px 16px #463f5e33;
+  transform-origin:50% 100%;transform:rotate(var(--r)) translateY(var(--y));transition:transform .18s}
 .deck button img{display:block;width:100%;height:100%;object-fit:cover}
-.deck button:hover,.deck button:focus-visible{transform:translateX(-50%) rotate(var(--r)) translateY(calc(var(--y) - 10px));outline:none}
+.deck button:hover,.deck button:focus-visible{transform:rotate(var(--r)) translateY(calc(var(--y) - 12px));outline:none}
 .deck.locked button{pointer-events:none;opacity:.5}
-.deck.locked button.chosen{opacity:1;transform:translateX(-50%) rotate(var(--r)) translateY(calc(var(--y) - 16px));box-shadow:0 12px 24px #b98f4588}
-@media (min-width:420px){.deck{height:270px}.deck button{width:124px}}
+.deck.locked button.chosen{opacity:1;transform:rotate(var(--r)) translateY(calc(var(--y) - 18px));box-shadow:0 12px 24px #b98f4588}
+@media (min-width:420px){.deck{height:280px}.deck button{width:118px;margin:0 -26px}}
 .hint{text-align:center;color:var(--ink-soft);font-size:13.5px;margin:12px 0 0}
 
 /* 結果 */
@@ -134,11 +134,11 @@ footer{text-align:center;color:var(--ink-soft);font-size:13px;margin-top:26px;fo
   function save(n){ try{ localStorage.setItem(KEY, String(n)); }catch(e){} }
 
   // 扇形に5枚。どれを選んでも22枚から1枚がランダムに出る(裏向きなので同じこと)
-  var FAN = [[-22,"22px"],[-11,"6px"],[0,"0px"],[11,"6px"],[22,"22px"]];
+  var FAN = [[-24,"-22px"],[-12,"-6px"],[0,"0px"],[12,"-6px"],[24,"-22px"]];
   FAN.forEach(function(f, pos){
     var b = document.createElement("button");
     b.type = "button"; b.setAttribute("aria-label","裏向きのカード "+(pos+1)+"枚目");
-    b.style.setProperty("--r", f[0]+"deg"); b.style.setProperty("--y", f[1]); b.style.zIndex = pos+1;
+    b.style.setProperty("--r", f[0]+"deg"); b.style.setProperty("--y", f[1]); b.style.zIndex = 3 - Math.abs(pos-2);
     b.innerHTML = '<img src="cards/back.jpg" alt="">';
     b.addEventListener("click", function(){ pick(Math.floor(Math.random()*22), b); });
     deck.appendChild(b);
